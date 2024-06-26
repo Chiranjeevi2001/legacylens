@@ -1,0 +1,44 @@
+{
+    "manifest_version" : 3,
+    "name" : "GitL - Legacy Scoring",
+    "version" : "1.0",	
+    "description" : "Evaluate the leagcy content inside your Git repository.",
+    "permissions" : [
+        "storage",
+        "activeTab",
+        "scripting",
+        "webNavigation",
+        "webRequest",
+        "tabs"
+    ],
+    "host_permissions" : [
+        "http://github.com/*",
+        "https://github.com/*"
+    ],
+    "background" : {
+        "service_worker" : "background.js"
+    },
+    "content_scripts" : [
+        {
+            "matches": ["https://github.com/*"],
+            "js": ["contentScript.js"]
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources" : [
+                "assets/gitl-logo.png"
+            ],
+            "matches" : ["https://github.com/*"]
+        }
+    ],
+    "action":{
+        "default_icon":{
+            "16": "assets/gitl-logo.png",
+            "24": "assets/gitl-logo.png",	
+            "32": "assets/gitl-logo.png"
+        },
+        "default_popup": "popup.html",
+        "default_title": "GitL - Legacy Scoring"
+    }
+}
