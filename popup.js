@@ -1,3 +1,4 @@
+// popup.js
 // get the latest release date (if exists)
 async function getLatestReleaseDate(repoUser, repoName) {
   const response = await fetch(`https://api.github.com/repos/${repoUser}/${repoName}/releases/latest`);
@@ -81,6 +82,24 @@ async function getAvgLoc(repoUser, repoName) {
   }
 };
 
+async function get_avg_CCN(repoUser, repoName) {
+  const url = `https://backend-5dhiotgan-chiranjeevi-b-ss-projects.vercel.app/get_avg_ccn?owner=${repoUser}&repo=${repoName}`;
+  const response = await fetch(url);
+  // exception handling
+  // if (!response.ok) {
+  //   return "Error fetching data";
+  // }
+  let data;
+  try{
+      data = await response.json();
+      return data;
+  }
+  catch(e){
+      // console.log("Error printing", e);
+      return undefined;
+  }
+};
+
 // function to calculate the number of days since a given date
 function daysSince(dateString) {
   const pastDate = new Date(dateString);
@@ -118,6 +137,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
   const fileCount = document.getElementById('repoFilesCount');
   const totalLoc = document.getElementById('totalLoc');
   const avgLoc = document.getElementById('avgLoc');
+  const avgCCN = document.getElementById('avgCCN');
   if (match) {
     const repoUser = match[3];
     const repoName = match[4];
@@ -168,8 +188,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
     getAvgLoc(repoUser, repoName).then((data) => {
       if(data === undefined) {
         fileCount.textContent = "Could not fetch files";
-        totalLoc.textContent = "";
-        avgLoc.textContent = "";
+        totalLoc.textContent = "NILL";
+        avgLoc.textContent = "NILL";
         return;
       }
       fileCount.innerHTML = `${data.file_count}`;
@@ -177,15 +197,23 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
       avgLoc.innerHTML = `${data.avg_loc}`;
     });
 
+    get_avg_CCN(repoUser, repoName).then((data) => {
+      if(data === undefined) {
+        avgCCN.textContent = "NILL";
+        return;
+      }
+      avgCCN.innerHTML = `${data.avg_complexity}`;
+    });
+
   } else {
     infoDiv.textContent = "Not on a GitHub repo page";
-    releaseDate.textContent = "";
-    commitDate.textContent = "";
-    pullReqDate.textContent = "";
-    issueDate.textContent = "";
-    fileCount.textContent = "";
-    totalLoc.textContent = "";
-    avgLoc.textContent = "";
+    releaseDate.textContent = "N/A";
+    commitDate.textContent = "N/A";
+    pullReqDate.textContent = "N/A";
+    issueDate.textContent = "N/A";
+    fileCount.textContent = "N/A";
+    totalLoc.textContent = "N/A";
+    avgLoc.textContent = "N/A";
   }
   
 });
