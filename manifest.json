@@ -2,7 +2,8 @@
     "manifest_version" : 3,
     "name" : "GitL - Legacy Scoring",
     "version" : "1.0",	
-    "description" : "Evaluate the leagcy content inside your Git repository.",
+    "description" : "Evaluate the legacy content inside your Git repository.",
+    "author": "Chiranjeevi2001",
     "permissions" : [
         "storage",
         "activeTab",
@@ -13,7 +14,8 @@
     ],
     "host_permissions" : [
         "http://github.com/*",
-        "https://github.com/*"
+        "https://github.com/*",
+        "https://backend-3tg8kybjc-chiranjeevi-b-ss-projects.vercel.app/*"
     ],
     "background" : {
         "service_worker" : "background.js"
@@ -27,7 +29,8 @@
     "web_accessible_resources": [
         {
             "resources" : [
-                "assets/gitl-logo.png"
+                "assets/gitl-logo.png",
+                "./util.mjs"
             ],
             "matches" : ["https://github.com/*"]
         }

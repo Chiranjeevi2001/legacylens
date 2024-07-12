@@ -1,24 +1,54 @@
-#info {
-    width: 280px;
-    color: #314d3e;
-  }
-  
-  .title {
-    font-size: 14px;
-    font-weight: bold;
-    padding: 8px;
-  }
-  
-  .textbox {
-    width: 100%;
-    font-size: 12px;
-    margin: 0;
-    padding: 0px 2px;
-  }
-  
-  .textbox:focus {
-    outline: 0;
-    border-color: #66afe9;
-  }
-  
-  
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#dashboard {
+  width: 320px;
+  background-color: #613131;
+  box-shadow: 0 0 10px rgba(23, 15, 133, 0.1);
+  border-radius: 8px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+h1 {
+  font-size: 18px;
+  color: #6de0a3;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.info-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.info-box:last-child {
+  border-bottom: none;
+}
+
+.label {
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.value {
+  font-size: 14px;
+  color: #ece06d;
+}
+
+strong {
+  font-weight: bold;
+  color: #8fe6b7;
+}

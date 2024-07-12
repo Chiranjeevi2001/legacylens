@@ -1,12 +1,16 @@
-const githubRepoRegex = /^(https?:\/\/)?(www\.)?github\.com\/([a-zA-Z0-9_-]+)\/([a-zA-Z0-9_-]+)(\/)?$/;
+( () => {
+  // const src = chrome.runtime.getURL('utils/utils.js');
+  // const content_script = await import(src);
 
-const url = window.location.href;
-const match = url.match(githubRepoRegex);
-
-if (match) {
-  const repoUser = match[3];
-  const repoName = match[4];
-  chrome.runtime.sendMessage({ repoUser, repoName });
-} else {
-  chrome.runtime.sendMessage({ error: "Not on a GitHub repo page" });
-}
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      const {type, repoUser, repoName} = message;
+      if(type === 'NEW')
+      {
+          // const latestReleaseDate = await content_script.getLatestReleaseDate(repoUser, repoName);
+          // latestReleaseDate.then((date) => {
+          //  response({date, repoUser, repoName})});
+          Response({repoUser, repoName});
+      }
+  });
+  
+})();

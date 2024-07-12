@@ -1,10 +1,47 @@
-<link href="popup.css" rel="stylesheet" type="text/css" />
-<script type="module" src="popup.js" defer></script>
-
-<div id="info">
-  <div>
-    <div class="title">Loading...</div>
-
-    <!-- <div class="bookmarks" id="bookmarks"></div> -->
-  </div>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GitHub Repo Dashboard</title>
+    <link href="popup.css" rel="stylesheet" type="text/css" />
+    <script type="module" src="popup.js" defer></script>
+</head>
+<body>
+    <div id="dashboard">
+        <h1>GitHub Repo Dashboard</h1>
+        <div class="info-box">
+          <div class="label">Repo info:</div>
+          <div class="value" id="info"><strong>Loading...</strong></div>
+      </div>
+        <div class="info-box">
+            <div class="label">Release Date:</div>
+            <div class="value" id="releaseDate"><strong>Loading...</strong></div>
+        </div>
+        
+        <div class="info-box">
+            <div class="label">Commit Date:</div>
+            <div class="value" id="commitDate"><strong>Loading...</strong></div>
+        </div>
+        <div class="info-box">
+            <div class="label">Pull Request Merged:</div>
+            <div class="value" id="pullRequestDate"><strong>Loading...</strong></div>
+        </div>
+        <div class="info-box">
+            <div class="label">Last Issue Resolved:</div>
+            <div class="value" id="lastIssueResolvedDate"><strong>Loading...</strong></div>
+        </div>
+        <div class="info-box">
+            <div class="label">Total Number of Files:</div>
+            <div class="value" id="repoFilesCount"><strong>Loading...</strong></div>
+        </div>
+        <div class="info-box">
+            <div class="label">Total Lines of Code:</div>
+            <div class="value" id="totalLoc"><strong>Loading...</strong></div>
+        </div>
+        <div class="info-box">
+            <div class="label">Average Lines of Code:</div>
+            <div class="value" id="avgLoc"><strong>Loading...</strong></div>
+        </div>
+    </div>
+</body>
+</html>
