@@ -15,8 +15,7 @@
     "host_permissions" : [
         "http://github.com/*",
         "https://github.com/*",
-        "https://backend-3tg8kybjc-chiranjeevi-b-ss-projects.vercel.app/*",
-        "https://backend-5dhiotgan-chiranjeevi-b-ss-projects.vercel.app/*"
+        "https://backend-pm23nezy0-chiranjeevi-b-ss-projects.vercel.app/*"
     ],
     "background" : {
         "service_worker" : "background.js"

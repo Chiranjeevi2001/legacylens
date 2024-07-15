@@ -6,6 +6,7 @@ import shutil
 import pygit2
 import lizard
 
+
 app = FastAPI()	
 SUPPORTED_EXTENSIONS = ['.py', '.java', '.c', '.cpp', '.js', '.json', '.cc', '.sh']
 
@@ -71,14 +72,14 @@ async def get_repo_files_count(owner: str, repo: str):
     average_loc = total_loc/file_count
     average_loc = round(average_loc, 2)
     
-    return JSONResponse(content = {"file_count": file_count, "total_loc": total_loc, "avg_loc": average_loc})
+    return JSONResponse(content = {"file_count": file_count, "total_loc": total_loc, "average_loc": average_loc})
 
 
 def calculate_average_cyclomatic_complexity(repo_dir):
     all_files = []
     for root, dirs, files in os.walk(repo_dir):
         for file in files:
-            if file.endswith(('.py', '.c', '.cpp', '.js', '.java', '.cs', '.go', '.swift', '.rb')):
+            if file.endswith(('.py', '.c', '.cpp', '.js', '.java', '.cs', '.go', '.swift', '.rb', '.css', '.html', '.ts', '.m', '.php', '.scala', '.sc', '.lua', '.rs', '.f90', '.for', '.f', '.kt')):
                 all_files.append(os.path.join(root, file))
 
     if not all_files:

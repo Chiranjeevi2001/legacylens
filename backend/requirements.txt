@@ -1,4 +1,5 @@
 fastapi
 uvicorn
 pygit2
+pygount
 lizard
