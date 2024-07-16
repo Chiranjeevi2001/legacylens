@@ -21,9 +21,15 @@ body {
 
 h1 {
   font-size: 18px;
-  color: #6de0a3;
+  color: #ece06d;
   text-align: center;
   margin-bottom: 20px;
+}
+h2 {
+  font-size: 16px;
+  color: #ece06d;
+  text-align: center;
+  margin-bottom: 15px;
 }
 
 .info-box {
@@ -41,14 +47,59 @@ h1 {
 .label {
   font-size: 14px;
   color: #ffffff;
+  width: 20px;
+  flex: 1;
 }
 
 .value {
   font-size: 14px;
   color: #ece06d;
+  flex: 2;
+  text-align: right;
 }
 
 strong {
   font-weight: bold;
   color: #8fe6b7;
+}
+
+.settings-box
+{
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #ffffff;
+  align-items: center;
+  padding: 10px;
+}
+
+.settings-box label {
+  flex: 1;
+}
+
+.settings-box input {
+  flex: 1;
+  background-color: #3b1e1e;
+  text-align: center;
+  color: #ece06d;
+  width: 15px;
+  margin-left: 10px;
+}
+
+#saveSettings {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 20px;
+  background-color: #ece06d;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+}
+
+#saveSettings:hover {
+  background-color: #8b833a;
+  color: white;
 }

@@ -1,7 +1,7 @@
 // popup.js
 // get the latest release date (if exists)
 
-const token = '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';
+const token = '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';
 async function getLatestReleaseDate(repoUser, repoName) {
   const response = await fetch(`https://api.github.com/repos/${repoUser}/${repoName}/releases/latest`, {
     method: 'GET',
@@ -25,7 +25,7 @@ async function getLatestDeploymentDate(repoUser, repoName) {
     }
   });
   const data = await response.json();
-  if(data.length!=0 && data[0].updated_at)
+  if(data && data.length!=0 && data[0].updated_at)
   {
     return data[0].updated_at;
   }
@@ -155,16 +155,35 @@ async function get_avg_CCN(repoUser, repoName) {
 };
 
 // function to calculate the number of days since a given date
-function daysSince(dateString) {
+function daysSince(dateString, referenceDate) {
   const pastDate = new Date(dateString);
   const currentDate = new Date();
+  const refDate = new Date(referenceDate);
   const timeDifference = currentDate - pastDate;
+  const refDifference = currentDate - refDate;
 
-  const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-
-  return daysDifference;
+  const actualDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+  const refDays = Math.floor(refDifference / (1000 * 60 * 60 * 24));
+  if(refDays === 0) {
+    return 100;
+  }
+  const score = (actualDays / refDays)*100;
+  if(score > 100)
+  {
+    return 100;
+  }
+  return score.toFixed(4);
 }
 
+
+// function to calculate scores
+function calculateScore(actualVal, referenceVal) {
+  const score = (actualVal / referenceVal) * 100;
+  if(score > 100) {
+    return 100;
+  }
+  return score.toFixed(4);
+};
 function isValidJson(jsonString) {
   try {
       JSON.parse(jsonString);
@@ -191,26 +210,141 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
   const issueDate = document.getElementById('lastIssueResolvedDate');
   const avgLoc = document.getElementById('avgLoc');
   const avgCCN = document.getElementById('avgCCN');
+
+
+  // reference dates and limits
+
+  const referenceDateInput = document.getElementById('referenceDate');
+  const locLimitInput = document.getElementById('locLimit');
+  const ccnLimitInput = document.getElementById('ccnLimit');
+  const saveSettingsButton = document.getElementById('saveSettings');
+
+  
   if (match) {
     const repoUser = match[3];
     const repoName = match[4];
     infoDiv.innerHTML = `${repoUser}/${repoName}`;
+
+     // load settings from storage
+    chrome.storage.sync.get(['referenceDate', 'locLimit', 'ccnLimit'], (settings) => {
+      if (settings.referenceDate) referenceDateInput.value = settings.referenceDate;
+      if (settings.locLimit) locLimitInput.value = settings.locLimit;
+      if (settings.ccnLimit) ccnLimitInput.value = settings.ccnLimit;
+    });
+
+  
+
+    saveSettingsButton.addEventListener('click', () => {
+      const referenceDate = referenceDateInput.value;
+      const locLimit = parseInt(locLimitInput.value, 10);
+      const ccnLimit = parseInt(ccnLimitInput.value, 10);
+
+      if (new Date(referenceDate) < new Date('2008-08-01') || new Date(referenceDate) > new Date()) {
+        alert('Please enter a valid reference date between August 2008 and the present date.');
+        return;
+      }
+      if (locLimit < 1 || locLimit > Number.MAX_SAFE_INTEGER) {
+        alert('Please enter a valid LOC limit between 1 and INT_MAX.');
+        return;
+      }
+      if (ccnLimit < 1 || ccnLimit > 25) {
+        alert('Please enter a valid cyclomatic complexity limit between 1 and 25.');
+        return;
+      }
+
+      chrome.storage.sync.set({ referenceDate, locLimit, ccnLimit }, () => {
+        alert('Settings saved successfully!');
+
+        // recalculating scores
+        getLatestReleaseDate(repoUser, repoName).then((date) => {
+          if(date === undefined) {
+            releaseDate.textContent = "NILL";
+            return;
+          }
+          const score = daysSince(date, referenceDate);
+          releaseDate.innerHTML = `${score}`;
+        });
+        getLatestDeploymentDate(repoUser, repoName).then((date) => {
+          if(date === undefined) {
+            deploymentDate.textContent = "NILL";
+            return;
+          }
+          const score = daysSince(date, referenceDate);
+          deploymentDate.innerHTML = `${score}`;
+        });
+        
+        getLatestCommitDate(repoUser, repoName).then((date) => {
+          if(date === undefined) {
+            commitDate.textContent = "NILL";
+            return;
+          }
+          const score = daysSince(date, referenceDate);
+          commitDate.innerHTML = `${score}`;
+        });
+    
+        getLatestAcceptedPullRequestDate(repoUser, repoName).then((date) => {
+          if(date === undefined) {
+            pullReqDate.textContent = "NILL";
+            return;
+          }
+          console.log("Merged at: ", date);
+          if(date === null) {
+            pullReqDate.textContent = "NILL";
+            return;
+          }
+          const score = daysSince(date, referenceDate);
+          pullReqDate.innerHTML = `${score}`;
+        });
+    
+        getLastIssueResolvedDate(repoUser, repoName).then((date) => {
+          if(date === undefined) {
+            issueDate.textContent = "NILL";
+            return;
+          }
+          const score = daysSince(date, referenceDate);
+          issueDate.innerHTML = `${score}`;
+        });
+        // let defaultBranch = 'main';
+        // getDefaultBranch(repoUser, repoName).then((branch) => {
+        //   defaultBranch = branch;
+        // });
+        getAvgLoc(repoUser, repoName).then((data) => {
+          if(data === undefined) {
+            avgLoc.textContent = "NILL";
+            return;
+          }
+          const score = calculateScore(data.average_loc, locLimit);
+          avgLoc.innerHTML = `${score}`; 
+        });
+    
+        get_avg_CCN(repoUser, repoName).then((data) => {
+          if(data === undefined) {
+            avgCCN.textContent = "NILL";
+            return;
+          }
+          const score = calculateScore(data.avg_complexity, ccnLimit);
+          avgCCN.innerHTML = `${score}`;
+        });
+        
+      });
+    });
+
 
     getLatestReleaseDate(repoUser, repoName).then((date) => {
       if(date === undefined) {
         releaseDate.textContent = "NILL";
         return;
       }
-      const days = daysSince(date);
-      releaseDate.innerHTML = `${days}`;
+      const score = daysSince(date, referenceDateInput.value);
+      releaseDate.innerHTML = `${score}`;
     });
     getLatestDeploymentDate(repoUser, repoName).then((date) => {
       if(date === undefined) {
         deploymentDate.textContent = "NILL";
         return;
       }
-      const days = daysSince(date);
-      deploymentDate.innerHTML = `${days}`;
+      const score = daysSince(date, referenceDateInput.value);
+      deploymentDate.innerHTML = `${score}`;
     });
     
     getLatestCommitDate(repoUser, repoName).then((date) => {
@@ -218,9 +352,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
         commitDate.textContent = "NILL";
         return;
       }
-      const d = new Date(date);
-      const days = daysSince(date);
-      commitDate.innerHTML = `${days}`;
+      const score = daysSince(date, referenceDateInput.value);
+      commitDate.innerHTML = `${score}`;
     });
 
     getLatestAcceptedPullRequestDate(repoUser, repoName).then((date) => {
@@ -233,9 +366,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
         pullReqDate.textContent = "NILL";
         return;
       }
-      const d = new Date(date);
-      const days = daysSince(date);
-      pullReqDate.innerHTML = `${days}`;
+      const score = daysSince(date, referenceDateInput.value);
+      pullReqDate.innerHTML = `${score}`;
     });
 
     getLastIssueResolvedDate(repoUser, repoName).then((date) => {
@@ -243,9 +375,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
         issueDate.textContent = "NILL";
         return;
       }
-      const d = new Date(date);
-      const days = daysSince(date);
-      issueDate.innerHTML = `${days}`;
+      const score = daysSince(date, referenceDateInput.value);
+      issueDate.innerHTML = `${score}`;
     });
     // let defaultBranch = 'main';
     // getDefaultBranch(repoUser, repoName).then((branch) => {
@@ -256,7 +387,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
         avgLoc.textContent = "NILL";
         return;
       }
-      avgLoc.innerHTML = `${data.average_loc}`; 
+      const score = calculateScore(data.average_loc, locLimitInput.value);
+      avgLoc.innerHTML = `${score}`; 
     });
 
     get_avg_CCN(repoUser, repoName).then((data) => {
@@ -264,7 +396,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
         avgCCN.textContent = "NILL";
         return;
       }
-      avgCCN.innerHTML = `${data.avg_complexity}`;
+      const score = calculateScore(data.avg_complexity, ccnLimitInput.value);
+      avgCCN.innerHTML = `${score}`;
     });
 
   } else {

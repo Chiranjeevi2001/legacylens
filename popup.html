@@ -14,34 +14,48 @@
           <div class="value" id="info"><strong>Loading...</strong></div>
       </div>
         <div class="info-box">
-            <div class="label">Release Date:</div>
+            <div class="label">Release Score:</div>
             <div class="value" id="releaseDate"><strong>Loading...</strong></div>
         </div>
         <div class="info-box">
-            <div class="label">Deployment Date:</div>
+            <div class="label">Deployment Score:</div>
             <div class="value" id="deploymentDate"><strong>Loading...</strong></div>
         </div>
         
         <div class="info-box">
-            <div class="label">Commit Date:</div>
+            <div class="label">Commit Score:</div>
             <div class="value" id="commitDate"><strong>Loading...</strong></div>
         </div>
         <div class="info-box">
-            <div class="label">Pull Request Merged:</div>
+            <div class="label">PR Score:</div>
             <div class="value" id="pullRequestDate"><strong>Loading...</strong></div>
         </div>
         <div class="info-box">
-            <div class="label">Last Issue Resolved:</div>
+            <div class="label">Issues Score:</div>
             <div class="value" id="lastIssueResolvedDate"><strong>Loading...</strong></div>
         </div>
         <div class="info-box">
-            <div class="label">Average Lines of Code:</div>
+            <div class="label">LOC Score:</div>
             <div class="value" id="avgLoc"><strong>This may take a while...</strong></div>
         </div>
         <div class="info-box">
-          <div class="label">Average Cyclomatic Complexity:</div>
+          <div class="label">CCN Score:</div>
           <div class="value" id="avgCCN"><strong>This may take a while...</strong></div>
       </div>
+      <h2>Settings</h2>
+        <div class="settings-box">
+            <label for="referenceDate">Reference Date:</label>
+            <input type="date" id="referenceDate" name="referenceDate" min="2008-08-01" max="2024-07-16" value="2008-08-01">
+        </div>
+        <div class="settings-box">
+            <label for="locLimit">LOC Limit:</label>
+            <input type="number" id="locLimit" name="locLimit" min="1" value="500">
+        </div>
+        <div class="settings-box">
+            <label for="ccnLimit">CCN Limit:</label>
+            <input type="number" id="ccnLimit" name="ccnLimit" min="1" max="25" value="10">
+        </div>
+        <button id="saveSettings">Save Settings</button>
     </div>
 </body>
 </html>
