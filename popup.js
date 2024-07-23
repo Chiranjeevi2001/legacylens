@@ -1,7 +1,7 @@
 // popup.js
 // get the latest release date (if exists)
 
-const token = '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';
+const token = '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';
 async function getLatestReleaseDate(repoUser, repoName) {
   const response = await fetch(`https://api.github.com/repos/${repoUser}/${repoName}/releases/latest`, {
     method: 'GET',
@@ -119,7 +119,7 @@ async function getDefaultBranch(repoUser, repoName) {
 // get the file count in the repo
 
 async function getAvgLoc(repoUser, repoName) {
-  const url = `https://backend-pm23nezy0-chiranjeevi-b-ss-projects.vercel.app/repo_avg_loc?owner=${repoUser}&repo=${repoName}`;
+  const url = `https://backend-q2pszxqn7-chiranjeevi-b-ss-projects.vercel.app/repo_avg_loc?owner=${repoUser}&repo=${repoName}`;
   const response = await fetch(url);
   // exception handling
   // if (!response.ok) {
@@ -137,7 +137,7 @@ async function getAvgLoc(repoUser, repoName) {
 };
 
 async function get_avg_CCN(repoUser, repoName) {
-  const url = `https://backend-pm23nezy0-chiranjeevi-b-ss-projects.vercel.app/get_avg_ccn?owner=${repoUser}&repo=${repoName}`;
+  const url = `https://backend-q2pszxqn7-chiranjeevi-b-ss-projects.vercel.app/get_avg_ccn?owner=${repoUser}&repo=${repoName}`;
   const response = await fetch(url);
   // exception handling
   // if (!response.ok) {
@@ -172,7 +172,7 @@ function daysSince(dateString, referenceDate) {
   {
     return 100;
   }
-  return score.toFixed(4);
+  return score.toFixed(2);
 }
 
 
@@ -193,8 +193,71 @@ function isValidJson(jsonString) {
   }
 }
 
+// function to fill the circular progress bar
 
+function calculateFinalScore(scores) {
+  let finalScore = 0;
+  let totalWeight = 0;
+  for (let key in scores) {
+    
+    console.log(key, scores[key]);
+    if(scores[key] !== 0 && scores[key] !== NaN) {
+      totalWeight+=100;
+      finalScore += parseInt(scores[key]);
+    }
+  }
+  return (finalScore/totalWeight)*100;
+}
 
+function setProgress(percent) {
+    const circle = document.querySelector('.progress-ring__circle');
+    const progressText = document.querySelector('.progress-ring__text');
+    const radius = circle.r.baseVal.value;
+    const circumference = 2 * Math.PI * radius;
+
+    circle.style.strokeDasharray = `${circumference} ${circumference}`;
+    const offset = circumference - (percent / 100 * circumference);
+    circle.style.strokeDashoffset = offset;
+
+    progressText.textContent = `${percent.toFixed(2)}%`;
+}
+
+function setProgressBars(scores, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar) {
+  for(let key in scores) {
+      switch(key) {
+        case 'releaseDate':
+          fillProgressBar(scores[key], releaseDateProgressBar);
+          break;
+        case 'deploymentDate':
+          fillProgressBar(scores[key], deploymentDateProgressBar);
+          break;
+        case 'commitDate':
+          fillProgressBar(scores[key], commitDateProgressBar);
+          break;
+        case 'pullReqDate':
+          fillProgressBar(scores[key], pullReqDateProgressBar);
+          break;
+        case 'issueDate':
+          fillProgressBar(scores[key], issueDateProgressBar);
+          break;
+        case 'avgLoc':
+          fillProgressBar(scores[key], avgLocProgressBar);
+          break;
+        case 'avgCCN':
+          fillProgressBar(scores[key], avgCCNProgressBar);
+          break;
+        default: console.log("Invalid key");
+    }
+  }
+}
+
+function fillProgressBar(value, element)
+{ 
+  const v = parseFloat(value).toFixed(2);
+  value = String(v);
+  element.style.setProperty('--width', v);
+  element.setAttribute('data-label', value+"%");
+}
 
 // Request the current tab's URL and check it on popup load
 chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
@@ -204,12 +267,19 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
   const match = url.match(githubRepoRegex);
   const infoDiv = document.getElementById('info');
   const releaseDate = document.getElementById('releaseDate');
+  const releaseDateProgressBar = document.getElementById('releaseDateProgressBar');
   const deploymentDate = document.getElementById('deploymentDate');
+  const deploymentDateProgressBar = document.getElementById('deploymentDateProgressBar');
   const commitDate = document.getElementById('commitDate');
+  const commitDateProgressBar = document.getElementById('commitDateProgressBar');
   const pullReqDate = document.getElementById('pullRequestDate');
+  const pullReqDateProgressBar = document.getElementById('pullRequestDateProgressBar');
   const issueDate = document.getElementById('lastIssueResolvedDate');
+  const issueDateProgressBar = document.getElementById('lastIssueResolvedDateProgressBar');
   const avgLoc = document.getElementById('avgLoc');
+  const avgLocProgressBar = document.getElementById('avgLocProgressBar');
   const avgCCN = document.getElementById('avgCCN');
+  const avgCCNProgressBar = document.getElementById('avgCCNProgressBar');
 
 
   // reference dates and limits
@@ -218,6 +288,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
   const locLimitInput = document.getElementById('locLimit');
   const ccnLimitInput = document.getElementById('ccnLimit');
   const saveSettingsButton = document.getElementById('saveSettings');
+
+  // progress circle
 
   
   if (match) {
@@ -256,151 +328,200 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
         alert('Settings saved successfully!');
 
         // recalculating scores
-        getLatestReleaseDate(repoUser, repoName).then((date) => {
-          if(date === undefined) {
-            releaseDate.textContent = "NILL";
-            return;
-          }
-          const score = daysSince(date, referenceDate);
-          releaseDate.innerHTML = `${score}`;
-        });
-        getLatestDeploymentDate(repoUser, repoName).then((date) => {
-          if(date === undefined) {
-            deploymentDate.textContent = "NILL";
-            return;
-          }
-          const score = daysSince(date, referenceDate);
-          deploymentDate.innerHTML = `${score}`;
-        });
-        
-        getLatestCommitDate(repoUser, repoName).then((date) => {
-          if(date === undefined) {
-            commitDate.textContent = "NILL";
-            return;
-          }
-          const score = daysSince(date, referenceDate);
-          commitDate.innerHTML = `${score}`;
-        });
-    
-        getLatestAcceptedPullRequestDate(repoUser, repoName).then((date) => {
-          if(date === undefined) {
-            pullReqDate.textContent = "NILL";
-            return;
-          }
-          console.log("Merged at: ", date);
-          if(date === null) {
-            pullReqDate.textContent = "NILL";
-            return;
-          }
-          const score = daysSince(date, referenceDate);
-          pullReqDate.innerHTML = `${score}`;
-        });
-    
-        getLastIssueResolvedDate(repoUser, repoName).then((date) => {
-          if(date === undefined) {
-            issueDate.textContent = "NILL";
-            return;
-          }
-          const score = daysSince(date, referenceDate);
-          issueDate.innerHTML = `${score}`;
-        });
-        // let defaultBranch = 'main';
-        // getDefaultBranch(repoUser, repoName).then((branch) => {
-        //   defaultBranch = branch;
-        // });
-        getAvgLoc(repoUser, repoName).then((data) => {
-          if(data === undefined) {
-            avgLoc.textContent = "NILL";
-            return;
-          }
-          const score = calculateScore(data.average_loc, locLimit);
-          avgLoc.innerHTML = `${score}`; 
-        });
-    
-        get_avg_CCN(repoUser, repoName).then((data) => {
-          if(data === undefined) {
-            avgCCN.textContent = "NILL";
-            return;
-          }
-          const score = calculateScore(data.avg_complexity, ccnLimit);
-          avgCCN.innerHTML = `${score}`;
-        });
-        
+        let scores = {};
+        const promises = [
+          getLatestReleaseDate(repoUser, repoName).then((date) => {
+            if(date === undefined) {
+              // releaseDate.innerHTML = "NILL";
+              scores['releaseDate'] = 0;
+              return;
+            }
+            const score = daysSince(date, referenceDate);
+            scores['releaseDate'] = score;
+          }),
+          getLatestDeploymentDate(repoUser, repoName).then((date) => {
+            if(date === undefined) {
+              // deploymentDate.innerHTML = "NILL";
+              scores['deploymentDate'] = 0;
+              return;
+            }
+            const score = daysSince(date, referenceDate);
+            scores['deploymentDate'] = score;
+          }),
+          
+          getLatestCommitDate(repoUser, repoName).then((date) => {
+            if(date === undefined) {
+              // commitDate.innerHTML = "NILL";
+              scores['commitDate'] = 0;
+              return;
+            }
+            const score = daysSince(date, referenceDate);
+            scores['commitDate'] = score;
+          }),
+      
+          getLatestAcceptedPullRequestDate(repoUser, repoName).then((date) => {
+            if(date === undefined) {
+              // pullReqDate.innerHTML = "NILL";
+              scores['pullReqDate'] = 0;
+              return;
+            }
+            console.log("Merged at: ", date);
+            if(date === null) {
+              // pullReqDate.innerHTML = "NILL";
+              scores['pullReqDate'] = 0;
+              return;
+            }
+            const score = daysSince(date, referenceDate);
+            scores['pullReqDate'] = score;
+          }),
+      
+          getLastIssueResolvedDate(repoUser, repoName).then((date) => {
+            if(date === undefined) {
+              // issueDate.innerHTML = "NILL";
+              scores['issueDate'] = 0;
+              return;
+            }
+            const score = daysSince(date, referenceDate);
+            scores['issueDate'] = score
+          }),
+          // let defaultBranch = 'main';
+          // getDefaultBranch(repoUser, repoName).then((branch) => {
+          //   defaultBranch = branch;
+          // });
+          getAvgLoc(repoUser, repoName).then((data) => {
+            if(data === undefined || data.average_loc === NaN) {
+              // avgLoc.innerHTML = "NILL";
+              scores['avgLoc'] = 0;
+              return;
+            }
+            const score = calculateScore(data.average_loc, locLimit);
+            if(score === NaN) {
+              // avgLoc.innerHTML = "NILL";
+              scores['avgLoc'] = 0;
+              return;
+            }
+            scores['avgLoc'] = score; 
+          }),
+      
+          get_avg_CCN(repoUser, repoName).then((data) => {
+            if(data === undefined) {
+              // avgCCN.innerHTML = "NILL";
+              scores['avgCCN'] = 0;
+              return;
+            }
+            const score = calculateScore(data.avg_complexity, ccnLimit);
+            if(score === NaN) {
+              // avgCCN.innerHTML = "NILL";
+              scores['avgCCN'] = 0;
+              return;
+            }
+            scores['avgCCN'] = score;
+          })
+      ];
+      Promise.all(promises).then(() => {
+        const progressValue = calculateFinalScore(scores);
+        setProgress(progressValue);
+        setProgressBars(scores, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar);
       });
     });
+  });
+    // put all scores in an object
+    let scores = {};
+    const promises = [
+      getLatestReleaseDate(repoUser, repoName).then((date) => {
+        if(date === undefined) {
+          // releaseDate.innerHTML = "NILL";
+          scores['releaseDate'] = 0;
+          return;
+        }
+        const score = daysSince(date, referenceDateInput.value);
+        fillProgressBar(score, releaseDateProgressBar);
+        scores['releaseDate'] = score;
+      }),
+      getLatestDeploymentDate(repoUser, repoName).then((date) => {
+        if(date === undefined) {
+          // deploymentDate.innerHTML = "NILL";
+          scores['deploymentDate'] = 0;
+          return;
+        }
+        const score = daysSince(date, referenceDateInput.value);
+        scores['deploymentDate'] = score;
+      }),
+      
+      getLatestCommitDate(repoUser, repoName).then((date) => {
+        if(date === undefined) {
+          // commitDate.innerHTML = "NILL";
+          scores['commitDate'] = 0;
+          return;
+        }
+        const score = daysSince(date, referenceDateInput.value);
+        scores['commitDate'] = score;
+      }),
 
+      getLatestAcceptedPullRequestDate(repoUser, repoName).then((date) => {
+        if(date === undefined) {
+          // pullReqDate.innerHTML = "NILL";
+          scores['pullReqDate'] = 0;
+          return;
+        }
+        console.log("Merged at: ", date);
+        if(date === null) {
+          // pullReqDate.innerHTML = "NILL";
+          scores['pullReqDate'] = 0;
+          return;
+        }
+        const score = daysSince(date, referenceDateInput.value);
+        scores['pullReqDate'] = score
+      }),
 
-    getLatestReleaseDate(repoUser, repoName).then((date) => {
-      if(date === undefined) {
-        releaseDate.textContent = "NILL";
-        return;
-      }
-      const score = daysSince(date, referenceDateInput.value);
-      releaseDate.innerHTML = `${score}`;
-    });
-    getLatestDeploymentDate(repoUser, repoName).then((date) => {
-      if(date === undefined) {
-        deploymentDate.textContent = "NILL";
-        return;
-      }
-      const score = daysSince(date, referenceDateInput.value);
-      deploymentDate.innerHTML = `${score}`;
-    });
-    
-    getLatestCommitDate(repoUser, repoName).then((date) => {
-      if(date === undefined) {
-        commitDate.textContent = "NILL";
-        return;
-      }
-      const score = daysSince(date, referenceDateInput.value);
-      commitDate.innerHTML = `${score}`;
-    });
+      getLastIssueResolvedDate(repoUser, repoName).then((date) => {
+        if(date === undefined) {
+          // issueDate.innerHTML = "NILL";
+          scores['issueDate'] = 0;
+          return;
+        }
+        const score = daysSince(date, referenceDateInput.value);
+        scores['issueDate'] = score;
+      }),
+      // let defaultBranch = 'main';
+      // getDefaultBranch(repoUser, repoName).then((branch) => {
+      //   defaultBranch = branch;
+      // });
+      getAvgLoc(repoUser, repoName).then((data) => {
+        if(data === undefined || data.average_loc === undefined) {
+          // avgLoc.innerHTML = "NILL";
+          scores['avgLoc'] = 0;
+          return;
+        }
+        const score = calculateScore(data.average_loc, locLimitInput.value);
+        if(score === NaN) {
+          // avgLoc.innerHTML = "NILL";
+          scores['avgLoc'] = 0;
+          return;
+        }
+        scores['avgLoc'] = score;
+      }),
 
-    getLatestAcceptedPullRequestDate(repoUser, repoName).then((date) => {
-      if(date === undefined) {
-        pullReqDate.textContent = "NILL";
-        return;
-      }
-      console.log("Merged at: ", date);
-      if(date === null) {
-        pullReqDate.textContent = "NILL";
-        return;
-      }
-      const score = daysSince(date, referenceDateInput.value);
-      pullReqDate.innerHTML = `${score}`;
-    });
+      get_avg_CCN(repoUser, repoName).then((data) => {
+        if(data === undefined || data.avg_complexity === undefined) {
+          // avgCCN.innerHTML = "NILL";
+          scores['avgCCN'] = 0;
+          return;
+        }
+        const score = calculateScore(data.avg_complexity, ccnLimitInput.value);
+        scores['avgCCN'] = score;
+      })
+    ]; 
+    // fill the circle
 
-    getLastIssueResolvedDate(repoUser, repoName).then((date) => {
-      if(date === undefined) {
-        issueDate.textContent = "NILL";
-        return;
-      }
-      const score = daysSince(date, referenceDateInput.value);
-      issueDate.innerHTML = `${score}`;
+    Promise.all(promises).then(() => {
+      const progressValue = calculateFinalScore(scores);
+      setProgress(progressValue);
+      setProgressBars(scores, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar);
     });
-    // let defaultBranch = 'main';
-    // getDefaultBranch(repoUser, repoName).then((branch) => {
-    //   defaultBranch = branch;
-    // });
-    getAvgLoc(repoUser, repoName).then((data) => {
-      if(data === undefined) {
-        avgLoc.textContent = "NILL";
-        return;
-      }
-      const score = calculateScore(data.average_loc, locLimitInput.value);
-      avgLoc.innerHTML = `${score}`; 
-    });
-
-    get_avg_CCN(repoUser, repoName).then((data) => {
-      if(data === undefined) {
-        avgCCN.textContent = "NILL";
-        return;
-      }
-      const score = calculateScore(data.avg_complexity, ccnLimitInput.value);
-      avgCCN.innerHTML = `${score}`;
-    });
-
-  } else {
+   
+  } 
+  else {
     const dashboard = document.getElementById('dashboard');
     dashboard.innerHTML = "<h1>Not a valid GitHub repository</h1>";
   }

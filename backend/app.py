@@ -8,7 +8,7 @@ import lizard
 
 
 app = FastAPI()	
-SUPPORTED_EXTENSIONS = ['.py', '.java', '.c', '.cpp', '.js', '.json', '.cc', '.sh']
+SUPPORTED_EXTENSIONS = ['.py', '.c', '.cpp', '.js', '.java', '.cs', '.go', '.swift', '.rb', '.css', '.html', '.ts', '.m', '.php', '.scala', '.sc', '.lua', '.rs', '.f90', '.for', '.f', '.kt']
 
 # function to clone a repo
 def clone_repo(clone_url, repo_dir):

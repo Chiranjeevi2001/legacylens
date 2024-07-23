@@ -1,6 +1,6 @@
 {
     "manifest_version" : 3,
-    "name" : "GitL - Legacy Scoring",
+    "name" : "Code Chronicle - Legacy Scoring",
     "version" : "1.0",	
     "description" : "Evaluate the legacy content inside your Git repository.",
     "author": "Chiranjeevi2001",
@@ -15,7 +15,7 @@
     "host_permissions" : [
         "http://github.com/*",
         "https://github.com/*",
-        "https://backend-pm23nezy0-chiranjeevi-b-ss-projects.vercel.app/*"
+        "https://backend-q2pszxqn7-chiranjeevi-b-ss-projects.vercel.app/*"
     ],
     "background" : {
         "service_worker" : "background.js"
@@ -29,7 +29,7 @@
     "web_accessible_resources": [
         {
             "resources" : [
-                "assets/gitl-logo.png",
+                "assets/CodeChroniclesIcon.png",
                 "./util.mjs"
             ],
             "matches" : ["https://github.com/*"]
@@ -37,11 +37,11 @@
     ],
     "action":{
         "default_icon":{
-            "16": "assets/gitl-logo.png",
-            "24": "assets/gitl-logo.png",	
-            "32": "assets/gitl-logo.png"
+            "16": "assets/CodeChroniclesIcon16.png",
+            "48": "assets/CodeChroniclesIcon48.png",
+            "128": "assets/CodeChroniclesIcon128.png"
         },
         "default_popup": "popup.html",
-        "default_title": "GitL - Legacy Scoring"
+        "default_title": "Code Chronicle - Legacy Scoring"
     }
 }
