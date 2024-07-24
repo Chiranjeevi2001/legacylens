@@ -30,7 +30,7 @@
         {
             "resources" : [
                 "assets/CodeChroniclesIcon.png",
-                "./util.mjs"
+                "./weights.json"
             ],
             "matches" : ["https://github.com/*"]
         }

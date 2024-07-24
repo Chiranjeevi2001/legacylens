@@ -57,28 +57,52 @@ h2 {
 
 .info-box {
   display: flex;
-  justify-content: space-between;
-  align-items: left;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #1d2229;
   padding: 10px;
-  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+  border: 1px solid black;
 }
 
 .info-box:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
+
 
 .label {
   font-size: 14px;
   color: #ffffff;
-  width: 20px;
-  flex: 1;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
 }
+
+.label::before {
+  content: '';
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  margin-right: 10px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.label.release::before { background-image: url('assets/releaseIcon.png'); }
+.label.deployment::before { background-image: url('assets/deploymentIcon.png'); }
+.label.commit::before { background-image: url('assets/commitIcon.png'); }
+.label.PR::before { background-image: url('assets/PRIcon.png'); }
+.label.issue::before { background-image: url('assets/issuesIcon.png'); }
+.label.loc::before { background-image: url('assets/locIcon.png'); }
+.label.ccn::before { background-image: url('assets/ccnIcon.png'); }
+.label.info::before { background-image: url('assets/infoIcon.png'); }
 
 .value {
   font-size: 14px;
   color: #76ABAE;
-  flex: 2;
-  text-align: right;
+  margin-left: 30px;
 }
 
 strong {
@@ -173,7 +197,7 @@ strong {
 }
 
 .progress-bar{
-  width: 170px;
+  width: 200px;
   position: relative;
   height: 1.5em;
   background-color: black;

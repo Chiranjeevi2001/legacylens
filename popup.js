@@ -1,7 +1,7 @@
 // popup.js
 // get the latest release date (if exists)
 
-const token = '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';
+const token = '';
 async function getLatestReleaseDate(repoUser, repoName) {
   const response = await fetch(`https://api.github.com/repos/${repoUser}/${repoName}/releases/latest`, {
     method: 'GET',
@@ -197,16 +197,14 @@ function isValidJson(jsonString) {
 
 function calculateFinalScore(scores) {
   let finalScore = 0;
-  let totalWeight = 0;
   for (let key in scores) {
     
     console.log(key, scores[key]);
     if(scores[key] !== 0 && scores[key] !== NaN) {
-      totalWeight+=100;
       finalScore += parseInt(scores[key]);
     }
   }
-  return (finalScore/totalWeight)*100;
+  return (finalScore/100)*100;
 }
 
 function setProgress(percent) {
@@ -222,29 +220,58 @@ function setProgress(percent) {
     progressText.textContent = `${percent.toFixed(2)}%`;
 }
 
-function setProgressBars(scores, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar) {
+// function to fill the individual progress bars
+function setProgressBars(scores, weights, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar) {
   for(let key in scores) {
       switch(key) {
         case 'releaseDate':
-          fillProgressBar(scores[key], releaseDateProgressBar);
+          let value1 = scores[key];
+          if(weights !== undefined && "releaseWeight" in weights) {
+            value1 /= weights.releaseWeight;
+          }
+          fillProgressBar(value1, releaseDateProgressBar);
           break;
         case 'deploymentDate':
-          fillProgressBar(scores[key], deploymentDateProgressBar);
+          let value2 = scores[key];
+          if(weights !== undefined && "deploymentWeight" in weights) {
+            value2 /= weights.deploymentWeight;
+          }
+          fillProgressBar(value2, deploymentDateProgressBar);
           break;
         case 'commitDate':
-          fillProgressBar(scores[key], commitDateProgressBar);
+          let value3 = scores[key];
+          if(weights !== undefined && "commitWeight" in weights) {
+            value3 /= weights.commitWeight;
+          }
+          fillProgressBar(value3, commitDateProgressBar);
           break;
         case 'pullReqDate':
-          fillProgressBar(scores[key], pullReqDateProgressBar);
+          let value4 = scores[key];
+          if(weights !== undefined && "pullRequestWeight" in weights) {
+            value4 /= weights.pullRequestWeight;
+          }
+          fillProgressBar(value4, pullReqDateProgressBar);
           break;
         case 'issueDate':
-          fillProgressBar(scores[key], issueDateProgressBar);
+          let value5 = scores[key];
+          if(weights !== undefined && "issueWeight" in weights) {
+            value5 /= weights.issueWeight;
+          }
+          fillProgressBar(value5, issueDateProgressBar);
           break;
         case 'avgLoc':
-          fillProgressBar(scores[key], avgLocProgressBar);
+          let value6 = scores[key];
+          if(weights !== undefined && "locWeight" in weights) {
+            value6 /= weights.locWeight;
+          }
+          fillProgressBar(value6, avgLocProgressBar);
           break;
         case 'avgCCN':
-          fillProgressBar(scores[key], avgCCNProgressBar);
+          let value7 = scores[key];
+          if(weights !== undefined && "ccnWeight" in weights) {
+            value7 /= weights.ccnWeight;
+          }
+          fillProgressBar(value7, avgCCNProgressBar);
           break;
         default: console.log("Invalid key");
     }
@@ -258,6 +285,8 @@ function fillProgressBar(value, element)
   element.style.setProperty('--width', v);
   element.setAttribute('data-label', value+"%");
 }
+
+// get the weights of the metrics
 
 // Request the current tab's URL and check it on popup load
 chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
@@ -297,6 +326,37 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
     const repoName = match[4];
     infoDiv.innerHTML = `${repoUser}/${repoName}`;
 
+    // read the weights
+
+    let weights;
+    fetch(chrome.runtime.getURL('weights.json'))
+      .then(response => response.json())
+      .then(data => {
+        weights = data;
+        console.log(weights);
+      })
+      .catch(error => {
+        console.log("Could not fetch weights");
+        weights = {"error": error}
+      });
+      let total = 0;
+      for(let key in weights) {
+        if(key !== "error") {
+          if(weights[key] > 1) {
+            weights[key] = 1;
+          }
+          total += weights[key];
+        }
+      }
+      // normalize the weights if they don't sum up to 1
+      if(total !== 1) {
+        for(let key in weights) {
+          if(key !== "error") {
+            weights[key] /= total;
+          }
+        }
+      }
+
      // load settings from storage
     chrome.storage.sync.get(['referenceDate', 'locLimit', 'ccnLimit'], (settings) => {
       if (settings.referenceDate) referenceDateInput.value = settings.referenceDate;
@@ -304,7 +364,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
       if (settings.ccnLimit) ccnLimitInput.value = settings.ccnLimit;
     });
 
-  
 
     saveSettingsButton.addEventListener('click', () => {
       const referenceDate = referenceDateInput.value;
@@ -337,7 +396,10 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
               return;
             }
             const score = daysSince(date, referenceDate);
-            scores['releaseDate'] = score;
+            scores['releaseDate'] = score; 
+            if("releaseWeight" in weights) {
+              scores["releaseDate"] *= weights.releaseWeight;
+            }
           }),
           getLatestDeploymentDate(repoUser, repoName).then((date) => {
             if(date === undefined) {
@@ -347,6 +409,9 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
             }
             const score = daysSince(date, referenceDate);
             scores['deploymentDate'] = score;
+            if("deploymentWeight" in weights) {
+              scores["deploymentDate"] *= weights.deploymentWeight;
+            }
           }),
           
           getLatestCommitDate(repoUser, repoName).then((date) => {
@@ -357,6 +422,9 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
             }
             const score = daysSince(date, referenceDate);
             scores['commitDate'] = score;
+            if("commitWeight" in weights) {
+              scores["commitDate"] *= weights.commitWeight;
+            }
           }),
       
           getLatestAcceptedPullRequestDate(repoUser, repoName).then((date) => {
@@ -373,6 +441,9 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
             }
             const score = daysSince(date, referenceDate);
             scores['pullReqDate'] = score;
+            if("pullRequestWeight" in weights) {
+              scores["pullReqDate"] *= weights.pullRequestWeight;
+            }
           }),
       
           getLastIssueResolvedDate(repoUser, repoName).then((date) => {
@@ -382,7 +453,10 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
               return;
             }
             const score = daysSince(date, referenceDate);
-            scores['issueDate'] = score
+            scores['issueDate'] = score;
+            if("issueWeight" in weights) {
+              scores["issueDate"] *= weights.issueWeight;
+            }
           }),
           // let defaultBranch = 'main';
           // getDefaultBranch(repoUser, repoName).then((branch) => {
@@ -401,6 +475,9 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
               return;
             }
             scores['avgLoc'] = score; 
+            if("locWeight" in weights) {
+              scores["avgLoc"] *= weights.locWeight;
+            }
           }),
       
           get_avg_CCN(repoUser, repoName).then((data) => {
@@ -416,12 +493,15 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
               return;
             }
             scores['avgCCN'] = score;
+            if("ccnWeight" in weights) {
+              scores["avgCCN"] *= weights.ccnWeight;
+            }
           })
       ];
       Promise.all(promises).then(() => {
         const progressValue = calculateFinalScore(scores);
         setProgress(progressValue);
-        setProgressBars(scores, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar);
+        setProgressBars(scores, weights, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar);
       });
     });
   });
@@ -437,6 +517,9 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
         const score = daysSince(date, referenceDateInput.value);
         fillProgressBar(score, releaseDateProgressBar);
         scores['releaseDate'] = score;
+        if("releaseWeight" in weights) {
+          scores["releaseDate"] *= weights.releaseWeight;
+        }
       }),
       getLatestDeploymentDate(repoUser, repoName).then((date) => {
         if(date === undefined) {
@@ -446,6 +529,9 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
         }
         const score = daysSince(date, referenceDateInput.value);
         scores['deploymentDate'] = score;
+        if("deploymentWeight" in weights) {
+          scores["deploymentDate"] *= weights.deploymentWeight;
+        }
       }),
       
       getLatestCommitDate(repoUser, repoName).then((date) => {
@@ -456,6 +542,9 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
         }
         const score = daysSince(date, referenceDateInput.value);
         scores['commitDate'] = score;
+        if("commitWeight" in weights) {
+          scores["commitDate"] *= weights.commitWeight;
+        }
       }),
 
       getLatestAcceptedPullRequestDate(repoUser, repoName).then((date) => {
@@ -471,7 +560,10 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
           return;
         }
         const score = daysSince(date, referenceDateInput.value);
-        scores['pullReqDate'] = score
+        scores['pullReqDate'] = score;
+        if("pullRequestWeight" in weights) {
+          scores["pullReqDate"] *= weights.pullRequestWeight;
+        }
       }),
 
       getLastIssueResolvedDate(repoUser, repoName).then((date) => {
@@ -482,6 +574,9 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
         }
         const score = daysSince(date, referenceDateInput.value);
         scores['issueDate'] = score;
+        if("issueWeight" in weights) {
+          scores["issueDate"] *= weights.issueWeight;
+        }
       }),
       // let defaultBranch = 'main';
       // getDefaultBranch(repoUser, repoName).then((branch) => {
@@ -500,6 +595,9 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
           return;
         }
         scores['avgLoc'] = score;
+        if("locWeight" in weights) {
+          scores["avgLoc"] *= weights.locWeight;
+        }
       }),
 
       get_avg_CCN(repoUser, repoName).then((data) => {
@@ -510,6 +608,9 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
         }
         const score = calculateScore(data.avg_complexity, ccnLimitInput.value);
         scores['avgCCN'] = score;
+        if("ccnWeight" in weights) {
+          scores["avgCCN"] *= weights.ccnWeight;
+        }
       })
     ]; 
     // fill the circle
@@ -517,7 +618,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
     Promise.all(promises).then(() => {
       const progressValue = calculateFinalScore(scores);
       setProgress(progressValue);
-      setProgressBars(scores, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar);
+      setProgressBars(scores, weights, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar);
     });
    
   } 
