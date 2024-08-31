@@ -8,7 +8,7 @@ import lizard
 
 
 app = FastAPI()	
-SUPPORTED_EXTENSIONS = ['.py', '.c', '.cpp', '.js', '.java', '.cs', '.go', '.swift', '.rb', '.css', '.html', '.ts', '.m', '.php', '.scala', '.sc', '.lua', '.rs', '.f90', '.for', '.f', '.kt']
+SUPPORTED_EXTENSIONS = ['.asm', '.hex','.S','.agc','.py', '.ipynb', '.c', '.cpp', '.js', '.java', '.cs', '.go', '.swift', '.rb', '.css', '.html', '.ts', '.m', '.php', '.scala', '.sc', '.lua', '.rs', '.f90', '.for', '.f', '.kt']
 
 # function to clone a repo
 def clone_repo(clone_url, repo_dir):
@@ -84,7 +84,7 @@ def calculate_average_cyclomatic_complexity(repo_dir):
 
     if not all_files:
         print("No supported files found to calculate complexity.")
-        return None
+        return {"avg_complexity":0, "total_files":0, "total_functions":0, "total_complexity":0}
 
     total_complexity = 0
     count = 0

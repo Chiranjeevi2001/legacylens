@@ -16,7 +16,6 @@ body {
   width: 320px;
   background-color: #222831;
   box-shadow: 0 0 10px rgba(23, 15, 133, 0.1);
-  border-radius: 8px;
   color: #638e91;
   text-align: center;
   align-items: center;
@@ -158,6 +157,7 @@ strong {
   display: flex;
   margin-left: 10px;
   justify-content: center;
+  margin-bottom: 10px;
   align-items: center;
 }
 .progress-ring {
@@ -168,7 +168,7 @@ strong {
 
 .progress-ring circle {
   fill: transparent;
-  stroke-width: 4;
+  stroke-width: 7;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
 }
@@ -214,9 +214,9 @@ strong {
   left: 0.25rem;
   bottom: .25em;
   width: calc(var(--width, 0) * 1%);
-  max-width: calc(100% - 0.25em);
+  max-width: calc(100% - 1.5em);
   background-color: #638e91;
   border-radius: 0.5em;
   padding: 0.5em;
-  /* transition: width 1s; */
+  transition: width 1s;
 }

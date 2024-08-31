@@ -119,7 +119,7 @@ async function getDefaultBranch(repoUser, repoName) {
 // get the file count in the repo
 
 async function getAvgLoc(repoUser, repoName) {
-  const url = `https://backend-q2pszxqn7-chiranjeevi-b-ss-projects.vercel.app/repo_avg_loc?owner=${repoUser}&repo=${repoName}`;
+  const url = `https://backend-8bl53qh53-chiranjeevi-b-ss-projects.vercel.app/repo_avg_loc?owner=${repoUser}&repo=${repoName}`;
   const response = await fetch(url);
   // exception handling
   // if (!response.ok) {
@@ -137,7 +137,7 @@ async function getAvgLoc(repoUser, repoName) {
 };
 
 async function get_avg_CCN(repoUser, repoName) {
-  const url = `https://backend-q2pszxqn7-chiranjeevi-b-ss-projects.vercel.app/get_avg_ccn?owner=${repoUser}&repo=${repoName}`;
+  const url = `https://backend-8bl53qh53-chiranjeevi-b-ss-projects.vercel.app/get_avg_ccn?owner=${repoUser}&repo=${repoName}`;
   const response = await fetch(url);
   // exception handling
   // if (!response.ok) {
@@ -295,19 +295,19 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
 
   const match = url.match(githubRepoRegex);
   const infoDiv = document.getElementById('info');
-  const releaseDate = document.getElementById('releaseDate');
+  // const releaseDate = document.getElementById('releaseDate');
   const releaseDateProgressBar = document.getElementById('releaseDateProgressBar');
-  const deploymentDate = document.getElementById('deploymentDate');
+  // const deploymentDate = document.getElementById('deploymentDate');
   const deploymentDateProgressBar = document.getElementById('deploymentDateProgressBar');
-  const commitDate = document.getElementById('commitDate');
+  // const commitDate = document.getElementById('commitDate');
   const commitDateProgressBar = document.getElementById('commitDateProgressBar');
-  const pullReqDate = document.getElementById('pullRequestDate');
+  // const pullReqDate = document.getElementById('pullRequestDate');
   const pullReqDateProgressBar = document.getElementById('pullRequestDateProgressBar');
-  const issueDate = document.getElementById('lastIssueResolvedDate');
+  // const issueDate = document.getElementById('lastIssueResolvedDate');
   const issueDateProgressBar = document.getElementById('lastIssueResolvedDateProgressBar');
-  const avgLoc = document.getElementById('avgLoc');
+  // const avgLoc = document.getElementById('avgLoc');
   const avgLocProgressBar = document.getElementById('avgLocProgressBar');
-  const avgCCN = document.getElementById('avgCCN');
+  // const avgCCN = document.getElementById('avgCCN');
   const avgCCNProgressBar = document.getElementById('avgCCNProgressBar');
 
 
@@ -515,7 +515,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
           return;
         }
         const score = daysSince(date, referenceDateInput.value);
-        fillProgressBar(score, releaseDateProgressBar);
         scores['releaseDate'] = score;
         if("releaseWeight" in weights) {
           scores["releaseDate"] *= weights.releaseWeight;
