@@ -196,7 +196,7 @@ strong {
   font-weight: bold;
 }
 
-.progress-bar{
+/* .progress-bar{
   width: 200px;
   position: relative;
   height: 1.5em;
@@ -219,4 +219,4 @@ strong {
   border-radius: 0.5em;
   padding: 0.5em;
   transition: width 1s;
-}
+} */

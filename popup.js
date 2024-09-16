@@ -175,6 +175,15 @@ function daysSince(dateString, referenceDate) {
   return score.toFixed(2);
 }
 
+function actualDaysSince(dateString) {
+  const pastDate = new Date(dateString);
+  const currentDate = new Date();
+  const timeDifference = currentDate - pastDate;
+  const actualDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+  return actualDays;
+
+}
+
 
 // function to calculate scores
 function calculateScore(actualVal, referenceVal) {
@@ -182,7 +191,7 @@ function calculateScore(actualVal, referenceVal) {
   if(score > 100) {
     return 100;
   }
-  return score.toFixed(4);
+  return score.toFixed(2);
 };
 function isValidJson(jsonString) {
   try {
@@ -200,7 +209,7 @@ function calculateFinalScore(scores) {
   for (let key in scores) {
     
     console.log(key, scores[key]);
-    if(scores[key] !== 0 && scores[key] !== NaN) {
+    if(scores[key] !== 0 && scores[key] !== NaN && scores[key] !== -1) {
       finalScore += parseInt(scores[key]);
     }
   }
@@ -221,70 +230,141 @@ function setProgress(percent) {
 }
 
 // function to fill the individual progress bars
-function setProgressBars(scores, weights, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar) {
+// function setProgressBars(scores, weights, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar) {
+//   for(let key in scores) {
+//       switch(key) {
+//         case 'releaseDate':
+//           let value1 = scores[key];
+//           if(weights !== undefined && "releaseWeight" in weights) {
+//             value1 /= weights.releaseWeight;
+//           }
+//           fillProgressBar(value1, releaseDateProgressBar);
+//           break;
+//         case 'deploymentDate':
+//           let value2 = scores[key];
+//           if(weights !== undefined && "deploymentWeight" in weights) {
+//             value2 /= weights.deploymentWeight;
+//           }
+//           fillProgressBar(value2, deploymentDateProgressBar);
+//           break;
+//         case 'commitDate':
+//           let value3 = scores[key];
+//           if(weights !== undefined && "commitWeight" in weights) {
+//             value3 /= weights.commitWeight;
+//           }
+//           fillProgressBar(value3, commitDateProgressBar);
+//           break;
+//         case 'pullReqDate':
+//           let value4 = scores[key];
+//           if(weights !== undefined && "pullRequestWeight" in weights) {
+//             value4 /= weights.pullRequestWeight;
+//           }
+//           fillProgressBar(value4, pullReqDateProgressBar);
+//           break;
+//         case 'issueDate':
+//           let value5 = scores[key];
+//           if(weights !== undefined && "issueWeight" in weights) {
+//             value5 /= weights.issueWeight;
+//           }
+//           fillProgressBar(value5, issueDateProgressBar);
+//           break;
+//         case 'avgLoc':
+//           let value6 = scores[key];
+//           if(weights !== undefined && "locWeight" in weights) {
+//             value6 /= weights.locWeight;
+//           }
+//           fillProgressBar(value6, avgLocProgressBar);
+//           break;
+//         case 'avgCCN':
+//           let value7 = scores[key];
+//           if(weights !== undefined && "ccnWeight" in weights) {
+//             value7 /= weights.ccnWeight;
+//           }
+//           fillProgressBar(value7, avgCCNProgressBar);
+//           break;
+//         default: console.log("Invalid key");
+//     }
+//   }
+// }
+
+function setValues(scores, releaseDate, deploymentDate, commitDate, pullReqDate, issueDate, avgLoc, avgCCN) {
   for(let key in scores) {
       switch(key) {
         case 'releaseDate':
           let value1 = scores[key];
-          if(weights !== undefined && "releaseWeight" in weights) {
-            value1 /= weights.releaseWeight;
+          if(value1 ==  -1) {
+            releaseDate.innerHTML = "N/A";
           }
-          fillProgressBar(value1, releaseDateProgressBar);
+          else{
+            releaseDate.innerHTML = value1 + " days ago";
+          }
           break;
         case 'deploymentDate':
           let value2 = scores[key];
-          if(weights !== undefined && "deploymentWeight" in weights) {
-            value2 /= weights.deploymentWeight;
+          if(value2 ==  -1) { 
+            deploymentDate.innerHTML = "N/A";
           }
-          fillProgressBar(value2, deploymentDateProgressBar);
+          else{
+            deploymentDate.innerHTML = value2 + " days ago";
+          }
           break;
         case 'commitDate':
           let value3 = scores[key];
-          if(weights !== undefined && "commitWeight" in weights) {
-            value3 /= weights.commitWeight;
+         if(value3 ==  -1) {
+            commitDate.innerHTML = "N/A";
           }
-          fillProgressBar(value3, commitDateProgressBar);
+          else{
+            commitDate.innerHTML = value3 + " days ago";
+          }
           break;
         case 'pullReqDate':
           let value4 = scores[key];
-          if(weights !== undefined && "pullRequestWeight" in weights) {
-            value4 /= weights.pullRequestWeight;
+          if(value4 ==  -1) {
+            pullReqDate.innerHTML = "N/A";
           }
-          fillProgressBar(value4, pullReqDateProgressBar);
+          else{
+            pullReqDate.innerHTML = value4 + " days ago";
+          }
           break;
         case 'issueDate':
           let value5 = scores[key];
-          if(weights !== undefined && "issueWeight" in weights) {
-            value5 /= weights.issueWeight;
+          if(value5 ==  -1) {
+            issueDate.innerHTML = "N/A";
           }
-          fillProgressBar(value5, issueDateProgressBar);
+          else{
+            issueDate.innerHTML = value5 + " days ago";
+          }
           break;
         case 'avgLoc':
           let value6 = scores[key];
-          if(weights !== undefined && "locWeight" in weights) {
-            value6 /= weights.locWeight;
+          if(value6 ==  -1) {
+            avgLoc.innerHTML = "Unable to get loc";
           }
-          fillProgressBar(value6, avgLocProgressBar);
+          else{
+            avgLoc.innerHTML = value6 + " loc per file";
+          }
           break;
         case 'avgCCN':
           let value7 = scores[key];
-          if(weights !== undefined && "ccnWeight" in weights) {
-            value7 /= weights.ccnWeight;
+          if(value7 ==  -1) {
+            avgCCN.innerHTML = "Unable to get ccn";
           }
-          fillProgressBar(value7, avgCCNProgressBar);
+          else{
+            avgCCN.innerHTML = value7 + " ccn per file";
+          }
           break;
         default: console.log("Invalid key");
     }
   }
 }
 
-function fillProgressBar(value, element)
-{ 
-  const v = parseFloat(value).toFixed(2);
-  value = String(v);
-  element.style.setProperty('--width', v);
-  element.setAttribute('data-label', value+"%");
-}
+// function fillProgressBar(value, element)
+// { 
+//   const v = parseFloat(value).toFixed(2);
+//   value = String(v);
+//   element.style.setProperty('--width', v);
+//   element.setAttribute('data-label', value+"%");
+// }
 
 // get the weights of the metrics
 
@@ -295,20 +375,20 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
 
   const match = url.match(githubRepoRegex);
   const infoDiv = document.getElementById('info');
-  // const releaseDate = document.getElementById('releaseDate');
-  const releaseDateProgressBar = document.getElementById('releaseDateProgressBar');
-  // const deploymentDate = document.getElementById('deploymentDate');
-  const deploymentDateProgressBar = document.getElementById('deploymentDateProgressBar');
-  // const commitDate = document.getElementById('commitDate');
-  const commitDateProgressBar = document.getElementById('commitDateProgressBar');
-  // const pullReqDate = document.getElementById('pullRequestDate');
-  const pullReqDateProgressBar = document.getElementById('pullRequestDateProgressBar');
-  // const issueDate = document.getElementById('lastIssueResolvedDate');
-  const issueDateProgressBar = document.getElementById('lastIssueResolvedDateProgressBar');
-  // const avgLoc = document.getElementById('avgLoc');
-  const avgLocProgressBar = document.getElementById('avgLocProgressBar');
-  // const avgCCN = document.getElementById('avgCCN');
-  const avgCCNProgressBar = document.getElementById('avgCCNProgressBar');
+  const releaseDate = document.getElementById('releaseDate');
+  // const releaseDateProgressBar = document.getElementById('releaseDateProgressBar');
+  const deploymentDate = document.getElementById('deploymentDate');
+  // const deploymentDateProgressBar = document.getElementById('deploymentDateProgressBar');
+  const commitDate = document.getElementById('commitDate');
+  // const commitDateProgressBar = document.getElementById('commitDateProgressBar');
+  const pullReqDate = document.getElementById('pullRequestDate');
+  // const pullReqDateProgressBar = document.getElementById('pullRequestDateProgressBar');
+  const issueDate = document.getElementById('lastIssueResolvedDate');
+  // const issueDateProgressBar = document.getElementById('lastIssueResolvedDateProgressBar');
+  const avgLoc = document.getElementById('avgLoc');
+  // const avgLocProgressBar = document.getElementById('avgLocProgressBar');
+  const avgCCN = document.getElementById('avgCCN');
+  // const avgCCNProgressBar = document.getElementById('avgCCNProgressBar');
 
 
   // reference dates and limits
@@ -388,15 +468,19 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
 
         // recalculating scores
         let scores = {};
+        let scores_without_weights = {};
         const promises = [
           getLatestReleaseDate(repoUser, repoName).then((date) => {
             if(date === undefined) {
               // releaseDate.innerHTML = "NILL";
-              scores['releaseDate'] = 0;
+              scores['releaseDate'] = -1;
+              scores_without_weights['releaseDate'] = -1; 
               return;
             }
             const score = daysSince(date, referenceDate);
             scores['releaseDate'] = score; 
+            const actualDays = actualDaysSince(date);
+            scores_without_weights['releaseDate'] = actualDays;
             if("releaseWeight" in weights) {
               scores["releaseDate"] *= weights.releaseWeight;
             }
@@ -404,11 +488,14 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
           getLatestDeploymentDate(repoUser, repoName).then((date) => {
             if(date === undefined) {
               // deploymentDate.innerHTML = "NILL";
-              scores['deploymentDate'] = 0;
+              scores['deploymentDate'] = -1;
+              scores_without_weights['deploymentDate'] = -1;
               return;
             }
             const score = daysSince(date, referenceDate);
             scores['deploymentDate'] = score;
+            const actualDays = actualDaysSince(date);
+            scores_without_weights['deploymentDate'] = actualDays;
             if("deploymentWeight" in weights) {
               scores["deploymentDate"] *= weights.deploymentWeight;
             }
@@ -417,11 +504,14 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
           getLatestCommitDate(repoUser, repoName).then((date) => {
             if(date === undefined) {
               // commitDate.innerHTML = "NILL";
-              scores['commitDate'] = 0;
+              scores['commitDate'] = -1;
+              scores_without_weights['commitDate'] = -1;
               return;
             }
             const score = daysSince(date, referenceDate);
             scores['commitDate'] = score;
+            const actualDays = actualDaysSince(date);
+            scores_without_weights['commitDate'] = actualDays;
             if("commitWeight" in weights) {
               scores["commitDate"] *= weights.commitWeight;
             }
@@ -430,17 +520,21 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
           getLatestAcceptedPullRequestDate(repoUser, repoName).then((date) => {
             if(date === undefined) {
               // pullReqDate.innerHTML = "NILL";
-              scores['pullReqDate'] = 0;
+              scores['pullReqDate'] = -1;
+              scores_without_weights['pullReqDate'] = -1;
               return;
             }
             console.log("Merged at: ", date);
             if(date === null) {
               // pullReqDate.innerHTML = "NILL";
-              scores['pullReqDate'] = 0;
+              scores['pullReqDate'] = -1;
+              scores_without_weights['pullReqDate'] = -1;
               return;
             }
             const score = daysSince(date, referenceDate);
             scores['pullReqDate'] = score;
+            const actualDays = actualDaysSince(date);
+            scores_without_weights['pullReqDate'] = actualDays;
             if("pullRequestWeight" in weights) {
               scores["pullReqDate"] *= weights.pullRequestWeight;
             }
@@ -449,11 +543,14 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
           getLastIssueResolvedDate(repoUser, repoName).then((date) => {
             if(date === undefined) {
               // issueDate.innerHTML = "NILL";
-              scores['issueDate'] = 0;
+              scores['issueDate'] = -1;
+              scores_without_weights['issueDate'] = -1;
               return;
             }
             const score = daysSince(date, referenceDate);
             scores['issueDate'] = score;
+            const actualDays = actualDaysSince(date);
+            scores_without_weights['issueDate'] = actualDays;
             if("issueWeight" in weights) {
               scores["issueDate"] *= weights.issueWeight;
             }
@@ -465,16 +562,19 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
           getAvgLoc(repoUser, repoName).then((data) => {
             if(data === undefined || data.average_loc === NaN) {
               // avgLoc.innerHTML = "NILL";
-              scores['avgLoc'] = 0;
+              scores['avgLoc'] = -1;
+              scores_without_weights['avgLoc'] = -1;
               return;
             }
             const score = calculateScore(data.average_loc, locLimit);
             if(score === NaN) {
               // avgLoc.innerHTML = "NILL";
-              scores['avgLoc'] = 0;
+              scores['avgLoc'] = -1;
+              scores_without_weights['avgLoc'] = -1;
               return;
             }
             scores['avgLoc'] = score; 
+            scores_without_weights['avgLoc'] = data.average_loc;
             if("locWeight" in weights) {
               scores["avgLoc"] *= weights.locWeight;
             }
@@ -483,16 +583,19 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
           get_avg_CCN(repoUser, repoName).then((data) => {
             if(data === undefined) {
               // avgCCN.innerHTML = "NILL";
-              scores['avgCCN'] = 0;
+              scores['avgCCN'] = -1;
+              scores_without_weights['avgCCN'] = -1;
               return;
             }
             const score = calculateScore(data.avg_complexity, ccnLimit);
             if(score === NaN) {
               // avgCCN.innerHTML = "NILL";
-              scores['avgCCN'] = 0;
+              scores['avgCCN'] = -1;
+              scores_without_weights['avgCCN'] = -1;
               return;
             }
             scores['avgCCN'] = score;
+            scores_without_weights['avgCCN'] = data.avg_complexity;
             if("ccnWeight" in weights) {
               scores["avgCCN"] *= weights.ccnWeight;
             }
@@ -501,21 +604,26 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
       Promise.all(promises).then(() => {
         const progressValue = calculateFinalScore(scores);
         setProgress(progressValue);
-        setProgressBars(scores, weights, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar);
+        // setProgressBars(scores, weights, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar);
+        setValues(scores_without_weights, releaseDate, deploymentDate, commitDate, pullReqDate, issueDate, avgLoc, avgCCN);
       });
     });
   });
     // put all scores in an object
     let scores = {};
+    let scores_without_weights = {};
     const promises = [
       getLatestReleaseDate(repoUser, repoName).then((date) => {
         if(date === undefined) {
           // releaseDate.innerHTML = "NILL";
-          scores['releaseDate'] = 0;
+          scores['releaseDate'] = -1;
+          scores_without_weights['releaseDate'] = -1;
           return;
         }
         const score = daysSince(date, referenceDateInput.value);
         scores['releaseDate'] = score;
+        const actualDays = actualDaysSince(date);
+        scores_without_weights['releaseDate'] = actualDays;
         if("releaseWeight" in weights) {
           scores["releaseDate"] *= weights.releaseWeight;
         }
@@ -523,11 +631,14 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
       getLatestDeploymentDate(repoUser, repoName).then((date) => {
         if(date === undefined) {
           // deploymentDate.innerHTML = "NILL";
-          scores['deploymentDate'] = 0;
+          scores['deploymentDate'] = -1;
+          scores_without_weights['deploymentDate'] = -1;
           return;
         }
         const score = daysSince(date, referenceDateInput.value);
         scores['deploymentDate'] = score;
+        const actualDays = actualDaysSince(date);
+        scores_without_weights['deploymentDate'] = actualDays;
         if("deploymentWeight" in weights) {
           scores["deploymentDate"] *= weights.deploymentWeight;
         }
@@ -536,11 +647,14 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
       getLatestCommitDate(repoUser, repoName).then((date) => {
         if(date === undefined) {
           // commitDate.innerHTML = "NILL";
-          scores['commitDate'] = 0;
+          scores['commitDate'] = -1;
+          scores_without_weights['commitDate'] = -1;
           return;
         }
         const score = daysSince(date, referenceDateInput.value);
         scores['commitDate'] = score;
+        const actualDays = actualDaysSince(date);
+        scores_without_weights['commitDate'] = actualDays;
         if("commitWeight" in weights) {
           scores["commitDate"] *= weights.commitWeight;
         }
@@ -549,17 +663,21 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
       getLatestAcceptedPullRequestDate(repoUser, repoName).then((date) => {
         if(date === undefined) {
           // pullReqDate.innerHTML = "NILL";
-          scores['pullReqDate'] = 0;
+          scores['pullReqDate'] = -1;
+          scores_without_weights['pullReqDate'] = -1;
           return;
         }
         console.log("Merged at: ", date);
         if(date === null) {
           // pullReqDate.innerHTML = "NILL";
-          scores['pullReqDate'] = 0;
+          scores['pullReqDate'] = -1;
+          scores_without_weights['pullReqDate'] = -1;
           return;
         }
         const score = daysSince(date, referenceDateInput.value);
         scores['pullReqDate'] = score;
+        const actualDays = actualDaysSince(date);
+        scores_without_weights['pullReqDate'] = actualDays;
         if("pullRequestWeight" in weights) {
           scores["pullReqDate"] *= weights.pullRequestWeight;
         }
@@ -568,11 +686,14 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
       getLastIssueResolvedDate(repoUser, repoName).then((date) => {
         if(date === undefined) {
           // issueDate.innerHTML = "NILL";
-          scores['issueDate'] = 0;
+          scores['issueDate'] = -1;
+          scores_without_weights['issueDate'] = -1;
           return;
         }
         const score = daysSince(date, referenceDateInput.value);
         scores['issueDate'] = score;
+        const actualDays = actualDaysSince(date);
+        scores_without_weights['issueDate'] = actualDays;
         if("issueWeight" in weights) {
           scores["issueDate"] *= weights.issueWeight;
         }
@@ -584,16 +705,19 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
       getAvgLoc(repoUser, repoName).then((data) => {
         if(data === undefined || data.average_loc === undefined) {
           // avgLoc.innerHTML = "NILL";
-          scores['avgLoc'] = 0;
+          scores['avgLoc'] = -1;
+          scores_without_weights['avgLoc'] = -1;
           return;
         }
         const score = calculateScore(data.average_loc, locLimitInput.value);
         if(score === NaN) {
           // avgLoc.innerHTML = "NILL";
-          scores['avgLoc'] = 0;
+          scores['avgLoc'] = -1;
+          scores_without_weights['avgLoc'] = -1;
           return;
         }
         scores['avgLoc'] = score;
+        scores_without_weights['avgLoc'] = data.average_loc;
         if("locWeight" in weights) {
           scores["avgLoc"] *= weights.locWeight;
         }
@@ -602,11 +726,13 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
       get_avg_CCN(repoUser, repoName).then((data) => {
         if(data === undefined || data.avg_complexity === undefined) {
           // avgCCN.innerHTML = "NILL";
-          scores['avgCCN'] = 0;
+          scores['avgCCN'] = -1;
+          scores_without_weights['avgCCN'] = -1;
           return;
         }
         const score = calculateScore(data.avg_complexity, ccnLimitInput.value);
         scores['avgCCN'] = score;
+        scores_without_weights['avgCCN'] = data.avg_complexity;
         if("ccnWeight" in weights) {
           scores["avgCCN"] *= weights.ccnWeight;
         }
@@ -617,7 +743,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
     Promise.all(promises).then(() => {
       const progressValue = calculateFinalScore(scores);
       setProgress(progressValue);
-      setProgressBars(scores, weights, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar);
+      // setProgressBars(scores, weights, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar);
+      setValues(scores_without_weights, releaseDate, deploymentDate, commitDate, pullReqDate, issueDate, avgLoc, avgCCN);
     });
    
   } 
