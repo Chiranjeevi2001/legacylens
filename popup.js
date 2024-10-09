@@ -119,7 +119,7 @@ async function getDefaultBranch(repoUser, repoName) {
 // get the file count in the repo
 
 async function getAvgLoc(repoUser, repoName) {
-  const url = `https://backend-8bl53qh53-chiranjeevi-b-ss-projects.vercel.app/repo_avg_loc?owner=${repoUser}&repo=${repoName}`;
+  const url = `https://backend-chiranjeevi2001-chiranjeevi-b-ss-projects.vercel.app/repo_avg_loc?owner=${repoUser}&repo=${repoName}`;
   const response = await fetch(url);
   // exception handling
   // if (!response.ok) {
@@ -137,7 +137,7 @@ async function getAvgLoc(repoUser, repoName) {
 };
 
 async function get_avg_CCN(repoUser, repoName) {
-  const url = `https://backend-8bl53qh53-chiranjeevi-b-ss-projects.vercel.app/get_avg_ccn?owner=${repoUser}&repo=${repoName}`;
+  const url = `https://backend-chiranjeevi2001-chiranjeevi-b-ss-projects.vercel.app/get_avg_ccn?owner=${repoUser}&repo=${repoName}`;
   const response = await fetch(url);
   // exception handling
   // if (!response.ok) {
@@ -213,6 +213,10 @@ function calculateFinalScore(scores, weights) {
       finalScore += parseInt(scores[key]);
       weightSum += weights[key];
     }
+  }
+  if(finalScore == 0)
+  {
+    return 0;
   }
   return (finalScore/weightSum);
 }
@@ -796,8 +800,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
         }
       })
     ]; 
-    // fill the circle
-
     Promise.all(promises).then(() => {
       const ageProgressValue = calculateFinalScore(age_scores, age_weights);
       const complexityProgressValue = calculateFinalScore(complexity_scores, complexity_weights);

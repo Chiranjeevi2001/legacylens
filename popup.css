@@ -26,8 +26,8 @@ body {
 .logo-title{
   background-color: #1d2229;
   text-align: center;
-  width: calc(100% + 40px); /* Adding twice the padding value of the dashboard */
-  margin: -20px -20px 0px -20px; /* Negative margins to counteract the padding of the dashboard */
+  width: calc(100% + 40px); 
+  margin: -20px -20px 0px -20px; 
   border-bottom: 2px solid black;
   padding: 5px;
   /* display: flex;
