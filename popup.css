@@ -153,49 +153,121 @@ strong {
   color: white;
 }
 
+.labels{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-top: 10px;
+  /* gap: 50px; */
+}
+
+.age-label{
+  position: relative;
+  display: flex;
+  top: 5px;
+  left: -26px;
+}
+
+.complexity-label{
+  position: relative;
+  display: flex;
+  top: 5px;
+  left: 52px;
+}
+
+
+.Scores{
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; 
+  gap: 20px; 
+  
+}
+
 .progress-container {
   display: flex;
   margin-left: 10px;
+  flex-direction: column;
   justify-content: center;
   margin-bottom: 10px;
+  text-align: center;
   align-items: center;
 }
-.progress-ring {
-  width: 120px;
-  height: 120px;
+.age-progress-ring {
+  width: 100px;
+  /* margin-top: 2px; */
+  height: 100px;
   position: relative;
 }
 
-.progress-ring circle {
+.age-progress-ring circle {
   fill: transparent;
   stroke-width: 7;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
 }
 
-.progress-ring__circle-bg {
+.age-progress-ring__circle-bg {
   stroke: #e6e6e6;
 }
 
-.progress-ring__circle-border{
+.age-progress-ring__circle-border{
   stroke: black;
   stroke-width: 11;
 }
-.progress-ring__circle {
+.age-progress-ring__circle {
   stroke: #76ABAE;
   stroke-linecap: round;
   stroke-dasharray: 0 100;
   transition: stroke-dasharray 1s;
 }
 
-.progress-ring__text {
-  font-size: 24px;
+.age-progress-ring__text {
+  font-size: 15px;
   fill: #76ABAE;
   text-anchor: middle;
   /* // dominant-baseline: middle; */
   font-weight: bold;
 }
 
+
+.complexity-progress-ring {
+  width: 100px;
+  /* margin-top: 2px; */
+  height: 100px;
+  position: relative;
+}
+
+.complexity-progress-ring circle {
+  fill: transparent;
+  stroke-width: 7;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.complexity-progress-ring__circle-bg {
+  stroke: #e6e6e6;
+}
+
+.complexity-progress-ring__circle-border{
+  stroke: black;
+  stroke-width: 11;
+}
+.complexity-progress-ring__circle {
+  stroke: #76ABAE;
+  stroke-linecap: round;
+  stroke-dasharray: 0 100;
+  transition: stroke-dasharray 1s;
+}
+
+.complexity-progress-ring__text {
+  font-size: 15px;
+  fill: #76ABAE;
+  text-anchor: middle;
+  /* // dominant-baseline: middle; */
+  font-weight: bold;
+}
 /* .progress-bar{
   width: 200px;
   position: relative;

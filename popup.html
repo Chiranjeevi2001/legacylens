@@ -12,15 +12,29 @@
             <img src="assets/CodeChroniclesLogo.png" alt="Logo" class="logo-image">
             <!-- <h1>Code Chronicle</h1> -->
         </div>
-        <h2>  Legacy Score:</h2>
+        <div class = "labels">
+            <div class = "age-label">AGE</div> <div class = "complexity-label">COMPLEXITY</div>
+        </div>
+        <div class = "Scores">
+        <!-- <h3>  Age Score:</h3> -->
         <div class="progress-container">
-            <svg class="progress-ring" width="120" height="120">
-                <circle class="progress-ring__circle-border" r="56" cx="60" cy="60"/>
-                <circle class="progress-ring__circle-bg" stroke-width="7" r="56" cx="60" cy="60"/>
-                <circle class="progress-ring__circle" stroke-width="7" r="56" cx="60" cy="60"/>
-                <text x="60" y="60" class="progress-ring__text" id="progress-value">0%</text>
+            <svg class="age-progress-ring" width="120" height="120">
+                <circle class="age-progress-ring__circle-border" r="40" cx="45" cy="45"/>
+                <circle class="age-progress-ring__circle-bg" stroke-width="7" r="40" cx="45" cy="45"/>
+                <circle class="age-progress-ring__circle" stroke-width="7" r="40" cx="45" cy="45"/>
+                <text x="45" y="55" class="age-progress-ring__text" id="progress-value">0%</text>
             </svg>
         </div>
+        <!-- <h3> Complexity Score:</h3> -->
+        <div class="progress-container">
+            <svg class="complexity-progress-ring" width="120" height="120">
+                <circle class="complexity-progress-ring__circle-border" r="40" cx="45" cy="45"/>
+                <circle class="complexity-progress-ring__circle-bg" stroke-width="7" r="40" cx="45" cy="45"/>
+                <circle class="complexity-progress-ring__circle" stroke-width="7" r="40" cx="45" cy="45"/>
+                <text x="45" y="55" class="complexity-progress-ring__text" id="progress-value">0%</text>
+            </svg>
+        </div>
+    </div>
         <div class="info-box">
           <div class="label info">Repo info:</div>
           <div class="value" id="info"><strong>Loading...</strong></div>
@@ -73,7 +87,7 @@
       <h2>Settings</h2>
         <div class="settings-box">
             <label for="referenceDate">Reference Date:</label>
-            <input type="date" id="referenceDate" name="referenceDate" min="2008-08-01" max="2024-07-16" value="2008-08-01">
+            <input type="date" id="referenceDate" name="referenceDate" min="2008-08-01" value="2008-08-01">
         </div>
         <div class="settings-box">
             <label for="locLimit">LOC Limit:</label>

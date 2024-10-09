@@ -204,21 +204,22 @@ function isValidJson(jsonString) {
 
 // function to fill the circular progress bar
 
-function calculateFinalScore(scores) {
-  let finalScore = 0;
+function calculateFinalScore(scores, weights) {
+  let finalScore = 0, weightSum = 0;
   for (let key in scores) {
     
     console.log(key, scores[key]);
     if(scores[key] !== 0 && scores[key] !== NaN && scores[key] !== -1) {
       finalScore += parseInt(scores[key]);
+      weightSum += weights[key];
     }
   }
-  return (finalScore/100)*100;
+  return (finalScore/weightSum);
 }
 
-function setProgress(percent) {
-    const circle = document.querySelector('.progress-ring__circle');
-    const progressText = document.querySelector('.progress-ring__text');
+function setAgeProgress(percent) {
+    const circle = document.querySelector('.age-progress-ring__circle');
+    const progressText = document.querySelector('.age-progress-ring__text');
     const radius = circle.r.baseVal.value;
     const circumference = 2 * Math.PI * radius;
 
@@ -228,6 +229,19 @@ function setProgress(percent) {
 
     progressText.textContent = `${percent.toFixed(2)}%`;
 }
+function setComplexityProgress(percent) {
+  const circle = document.querySelector('.complexity-progress-ring__circle');
+  const progressText = document.querySelector('.complexity-progress-ring__text');
+  const radius = circle.r.baseVal.value;
+  const circumference = 2 * Math.PI * radius;
+
+  circle.style.strokeDasharray = `${circumference} ${circumference}`;
+  const offset = circumference - (percent / 100 * circumference);
+  circle.style.strokeDashoffset = offset;
+
+  progressText.textContent = `${percent.toFixed(2)}%`;
+}
+
 
 // function to fill the individual progress bars
 // function setProgressBars(scores, weights, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar) {
@@ -287,7 +301,7 @@ function setProgress(percent) {
 //   }
 // }
 
-function setValues(scores, releaseDate, deploymentDate, commitDate, pullReqDate, issueDate, avgLoc, avgCCN) {
+function setAgeValues(scores, releaseDate, deploymentDate, commitDate, pullReqDate, issueDate) {
   for(let key in scores) {
       switch(key) {
         case 'releaseDate':
@@ -335,6 +349,15 @@ function setValues(scores, releaseDate, deploymentDate, commitDate, pullReqDate,
             issueDate.innerHTML = value5 + " days ago";
           }
           break;
+        
+        default: console.log("Invalid key");
+    }
+  }
+}
+
+function setComplexityValues(scores, avgLoc, avgCCN) {
+  for(let key in scores) {
+      switch(key) {
         case 'avgLoc':
           let value6 = scores[key];
           if(value6 ==  -1) {
@@ -350,9 +373,10 @@ function setValues(scores, releaseDate, deploymentDate, commitDate, pullReqDate,
             avgCCN.innerHTML = "Unable to get ccn";
           }
           else{
-            avgCCN.innerHTML = value7 + " ccn per file";
+            avgCCN.innerHTML = value7 + " ccn per function";
           }
           break;
+        
         default: console.log("Invalid key");
     }
   }
@@ -390,7 +414,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
   const avgCCN = document.getElementById('avgCCN');
   // const avgCCNProgressBar = document.getElementById('avgCCNProgressBar');
 
-
   // reference dates and limits
 
   const referenceDateInput = document.getElementById('referenceDate');
@@ -400,7 +423,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
 
   // progress circle
 
-  
   if (match) {
     const repoUser = match[3];
     const repoName = match[4];
@@ -408,33 +430,67 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
 
     // read the weights
 
-    let weights;
-    fetch(chrome.runtime.getURL('weights.json'))
+    let age_weights, complexity_weights;
+    fetch(chrome.runtime.getURL('age_weights.json'))
       .then(response => response.json())
       .then(data => {
-        weights = data;
-        console.log(weights);
+        age_weights = data;
+        // console.log(weights);
       })
       .catch(error => {
         console.log("Could not fetch weights");
-        weights = {"error": error}
+        age_weights = {"error": error}
+      });
+      fetch(chrome.runtime.getURL('complexity_weights.json'))
+      .then(response => response.json())
+      .then(data => {
+        complexity_weights = data;
+        // console.log(weights);
+      })
+      .catch(error => {
+        console.log("Could not fetch weights");
+        complexity_weights = {"error": error}
       });
       let total = 0;
-      for(let key in weights) {
+      for(let key in age_weights) {
         if(key !== "error") {
-          if(weights[key] > 1) {
-            weights[key] = 1;
+          if(age_weights[key] > 1) {
+            age_weights[key] = 1;
           }
-          total += weights[key];
+          total += age_weights[key];
         }
       }
-      // normalize the weights if they don't sum up to 1
+      // normalize the age weights
       if(total !== 1) {
-        for(let key in weights) {
+        for(let key in age_weights) {
           if(key !== "error") {
-            weights[key] /= total;
+            age_weights[key] /= total;
           }
         }
+      }
+      total = 0;
+      for(let key in complexity_weights) {
+        if(key !== "error") {
+          if(complexity_weights[key] > 1) {
+            complexity_weights[key] = 1;
+          }
+          total += complexity_weights[key];
+        }
+      }
+      // normalize the complexity weights
+      if(total !== 1) {
+        for(let key in complexity_weights) {
+          if(key !== "error") {
+            complexity_weights[key] /= total;
+          }
+        }
+      }
+
+      for(key in age_weights){
+        console.log(key, age_weights[key]);
+      }
+      for(key in complexity_weights){
+        console.log(key, complexity_weights[key]);
       }
 
      // load settings from storage
@@ -443,7 +499,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
       if (settings.locLimit) locLimitInput.value = settings.locLimit;
       if (settings.ccnLimit) ccnLimitInput.value = settings.ccnLimit;
     });
-
 
     saveSettingsButton.addEventListener('click', () => {
       const referenceDate = referenceDateInput.value;
@@ -458,8 +513,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
         alert('Please enter a valid LOC limit between 1 and INT_MAX.');
         return;
       }
-      if (ccnLimit < 1 || ccnLimit > 25) {
-        alert('Please enter a valid cyclomatic complexity limit between 1 and 25.');
+      if (ccnLimit < 1 || ccnLimit > 150) {
+        alert('Please enter a valid cyclomatic complexity limit between 1 and 150.');
         return;
       }
 
@@ -467,92 +522,92 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
         alert('Settings saved successfully!');
 
         // recalculating scores
-        let scores = {};
-        let scores_without_weights = {};
+        let age_scores = {}, complexity_scores = {};
+        let age_scores_without_weights = {}, complexity_scores_without_weights = {};
         const promises = [
           getLatestReleaseDate(repoUser, repoName).then((date) => {
             if(date === undefined) {
               // releaseDate.innerHTML = "NILL";
-              scores['releaseDate'] = -1;
-              scores_without_weights['releaseDate'] = -1; 
+              age_scores['releaseDate'] = -1;
+              age_scores_without_weights['releaseDate'] = -1; 
               return;
             }
             const score = daysSince(date, referenceDate);
-            scores['releaseDate'] = score; 
+            age_scores['releaseDate'] = score; 
             const actualDays = actualDaysSince(date);
-            scores_without_weights['releaseDate'] = actualDays;
-            if("releaseWeight" in weights) {
-              scores["releaseDate"] *= weights.releaseWeight;
+            age_scores_without_weights['releaseDate'] = actualDays;
+            if("releaseDate" in age_weights) {
+              age_scores["releaseDate"] *= age_weights.releaseDate;
             }
           }),
           getLatestDeploymentDate(repoUser, repoName).then((date) => {
             if(date === undefined) {
               // deploymentDate.innerHTML = "NILL";
-              scores['deploymentDate'] = -1;
-              scores_without_weights['deploymentDate'] = -1;
+              age_scores['deploymentDate'] = -1;
+              age_scores_without_weights['deploymentDate'] = -1;
               return;
             }
             const score = daysSince(date, referenceDate);
-            scores['deploymentDate'] = score;
+            age_scores['deploymentDate'] = score;
             const actualDays = actualDaysSince(date);
-            scores_without_weights['deploymentDate'] = actualDays;
-            if("deploymentWeight" in weights) {
-              scores["deploymentDate"] *= weights.deploymentWeight;
+            age_scores_without_weights['deploymentDate'] = actualDays;
+            if("deploymentDate" in age_weights) {
+              age_scores["deploymentDate"] *= age_weights.deploymentDate;
             }
           }),
           
           getLatestCommitDate(repoUser, repoName).then((date) => {
             if(date === undefined) {
               // commitDate.innerHTML = "NILL";
-              scores['commitDate'] = -1;
-              scores_without_weights['commitDate'] = -1;
+              age_scores['commitDate'] = -1;
+              age_scores_without_weights['commitDate'] = -1;
               return;
             }
             const score = daysSince(date, referenceDate);
-            scores['commitDate'] = score;
+            age_scores['commitDate'] = score;
             const actualDays = actualDaysSince(date);
-            scores_without_weights['commitDate'] = actualDays;
-            if("commitWeight" in weights) {
-              scores["commitDate"] *= weights.commitWeight;
+            age_scores_without_weights['commitDate'] = actualDays;
+            if("commitDate" in age_weights) {
+              age_scores["commitDate"] *= age_weights.commitDate;
             }
           }),
       
           getLatestAcceptedPullRequestDate(repoUser, repoName).then((date) => {
             if(date === undefined) {
               // pullReqDate.innerHTML = "NILL";
-              scores['pullReqDate'] = -1;
-              scores_without_weights['pullReqDate'] = -1;
+              age_scores['pullReqDate'] = -1;
+              age_scores_without_weights['pullReqDate'] = -1;
               return;
             }
             console.log("Merged at: ", date);
             if(date === null) {
               // pullReqDate.innerHTML = "NILL";
-              scores['pullReqDate'] = -1;
-              scores_without_weights['pullReqDate'] = -1;
+              age_scores['pullReqDate'] = -1;
+              age_scores_without_weights['pullReqDate'] = -1;
               return;
             }
             const score = daysSince(date, referenceDate);
-            scores['pullReqDate'] = score;
+            age_scores['pullReqDate'] = score;
             const actualDays = actualDaysSince(date);
-            scores_without_weights['pullReqDate'] = actualDays;
-            if("pullRequestWeight" in weights) {
-              scores["pullReqDate"] *= weights.pullRequestWeight;
+            age_scores_without_weights['pullReqDate'] = actualDays;
+            if("pullReqDate" in age_weights) {
+              age_scores["pullReqDate"] *= age_weights.pullReqDate;
             }
           }),
       
           getLastIssueResolvedDate(repoUser, repoName).then((date) => {
             if(date === undefined) {
               // issueDate.innerHTML = "NILL";
-              scores['issueDate'] = -1;
-              scores_without_weights['issueDate'] = -1;
+              age_scores['issueDate'] = -1;
+              age_scores_without_weights['issueDate'] = -1;
               return;
             }
             const score = daysSince(date, referenceDate);
-            scores['issueDate'] = score;
+            age_scores['issueDate'] = score;
             const actualDays = actualDaysSince(date);
-            scores_without_weights['issueDate'] = actualDays;
-            if("issueWeight" in weights) {
-              scores["issueDate"] *= weights.issueWeight;
+            age_scores_without_weights['issueDate'] = actualDays;
+            if("issueDate" in age_weights) {
+              age_scores["issueDate"] *= age_weights.issueDate;
             }
           }),
           // let defaultBranch = 'main';
@@ -562,140 +617,143 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
           getAvgLoc(repoUser, repoName).then((data) => {
             if(data === undefined || data.average_loc === NaN) {
               // avgLoc.innerHTML = "NILL";
-              scores['avgLoc'] = -1;
-              scores_without_weights['avgLoc'] = -1;
+              complexity_scores['avgLoc'] = -1;
+              complexity_scores_without_weights['avgLoc'] = -1;
               return;
             }
             const score = calculateScore(data.average_loc, locLimit);
             if(score === NaN) {
               // avgLoc.innerHTML = "NILL";
-              scores['avgLoc'] = -1;
-              scores_without_weights['avgLoc'] = -1;
+              complexity_scores['avgLoc'] = -1;
+              complexity_scores_without_weights['avgLoc'] = -1;
               return;
             }
-            scores['avgLoc'] = score; 
-            scores_without_weights['avgLoc'] = data.average_loc;
-            if("locWeight" in weights) {
-              scores["avgLoc"] *= weights.locWeight;
+            complexity_scores['avgLoc'] = score; 
+            complexity_scores_without_weights['avgLoc'] = data.average_loc;
+            if("avgLoc" in complexity_weights) {
+              complexity_scores["avgLoc"] *= complexity_weights.avgLoc;
             }
           }),
       
           get_avg_CCN(repoUser, repoName).then((data) => {
             if(data === undefined) {
               // avgCCN.innerHTML = "NILL";
-              scores['avgCCN'] = -1;
-              scores_without_weights['avgCCN'] = -1;
+              complexity_scores['avgCCN'] = -1;
+              complexity_scores_without_weights['avgCCN'] = -1;
               return;
             }
             const score = calculateScore(data.avg_complexity, ccnLimit);
             if(score === NaN) {
               // avgCCN.innerHTML = "NILL";
-              scores['avgCCN'] = -1;
-              scores_without_weights['avgCCN'] = -1;
+              complexity_scores['avgCCN'] = -1;
+              complexity_scores_without_weights['avgCCN'] = -1;
               return;
             }
-            scores['avgCCN'] = score;
-            scores_without_weights['avgCCN'] = data.avg_complexity;
-            if("ccnWeight" in weights) {
-              scores["avgCCN"] *= weights.ccnWeight;
+            complexity_scores['avgCCN'] = score;
+            complexity_scores_without_weights['avgCCN'] = data.avg_complexity;
+            if("avgCCN" in complexity_weights) {
+              complexity_scores["avgCCN"] *= complexity_weights.avgCCN;
             }
           })
       ];
       Promise.all(promises).then(() => {
-        const progressValue = calculateFinalScore(scores);
-        setProgress(progressValue);
+        const ageProgressValue = calculateFinalScore(age_scores, age_weights);
+        const complexityProgressValue = calculateFinalScore(complexity_scores, complexity_weights);
+        setAgeProgress(ageProgressValue);
+        setComplexityProgress(complexityProgressValue);
         // setProgressBars(scores, weights, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar);
-        setValues(scores_without_weights, releaseDate, deploymentDate, commitDate, pullReqDate, issueDate, avgLoc, avgCCN);
+        setAgeValues(age_scores_without_weights, releaseDate, deploymentDate, commitDate, pullReqDate, issueDate, avgLoc, avgCCN);
+        setComplexityValues(complexity_scores_without_weights, avgLoc, avgCCN);
       });
     });
   });
     // put all scores in an object
-    let scores = {};
-    let scores_without_weights = {};
+    let age_scores = {}, complexity_scores = {};
+    let age_scores_without_weights = {}, complexity_scores_without_weights = {};
     const promises = [
       getLatestReleaseDate(repoUser, repoName).then((date) => {
         if(date === undefined) {
           // releaseDate.innerHTML = "NILL";
-          scores['releaseDate'] = -1;
-          scores_without_weights['releaseDate'] = -1;
+          age_scores['releaseDate'] = -1;
+          age_scores_without_weights['releaseDate'] = -1;
           return;
         }
         const score = daysSince(date, referenceDateInput.value);
-        scores['releaseDate'] = score;
+        age_scores['releaseDate'] = score;
         const actualDays = actualDaysSince(date);
-        scores_without_weights['releaseDate'] = actualDays;
-        if("releaseWeight" in weights) {
-          scores["releaseDate"] *= weights.releaseWeight;
+        age_scores_without_weights['releaseDate'] = actualDays;
+        if("releaseDate" in age_weights) {
+          age_scores["releaseDate"] *= age_weights.releaseDate;
         }
       }),
       getLatestDeploymentDate(repoUser, repoName).then((date) => {
         if(date === undefined) {
           // deploymentDate.innerHTML = "NILL";
-          scores['deploymentDate'] = -1;
-          scores_without_weights['deploymentDate'] = -1;
+          age_scores['deploymentDate'] = -1;
+          age_scores_without_weights['deploymentDate'] = -1;
           return;
         }
         const score = daysSince(date, referenceDateInput.value);
-        scores['deploymentDate'] = score;
+        age_scores['deploymentDate'] = score;
         const actualDays = actualDaysSince(date);
-        scores_without_weights['deploymentDate'] = actualDays;
-        if("deploymentWeight" in weights) {
-          scores["deploymentDate"] *= weights.deploymentWeight;
+        age_scores_without_weights['deploymentDate'] = actualDays;
+        if("deploymentDate" in age_weights) {
+          age_scores["deploymentDate"] *= age_weights.deploymentDate;
         }
       }),
       
       getLatestCommitDate(repoUser, repoName).then((date) => {
         if(date === undefined) {
           // commitDate.innerHTML = "NILL";
-          scores['commitDate'] = -1;
-          scores_without_weights['commitDate'] = -1;
+          age_scores['commitDate'] = -1;
+          age_scores_without_weights['commitDate'] = -1;
           return;
         }
         const score = daysSince(date, referenceDateInput.value);
-        scores['commitDate'] = score;
+        age_scores['commitDate'] = score;
         const actualDays = actualDaysSince(date);
-        scores_without_weights['commitDate'] = actualDays;
-        if("commitWeight" in weights) {
-          scores["commitDate"] *= weights.commitWeight;
+        age_scores_without_weights['commitDate'] = actualDays;
+        if("commitDate" in age_weights) {
+          age_scores["commitDate"] *= age_weights.commitDate;
         }
       }),
 
       getLatestAcceptedPullRequestDate(repoUser, repoName).then((date) => {
         if(date === undefined) {
           // pullReqDate.innerHTML = "NILL";
-          scores['pullReqDate'] = -1;
-          scores_without_weights['pullReqDate'] = -1;
+          age_scores['pullReqDate'] = -1;
+          age_scores_without_weights['pullReqDate'] = -1;
           return;
         }
         console.log("Merged at: ", date);
         if(date === null) {
           // pullReqDate.innerHTML = "NILL";
-          scores['pullReqDate'] = -1;
-          scores_without_weights['pullReqDate'] = -1;
+          age_scores['pullReqDate'] = -1;
+          age_scores_without_weights['pullReqDate'] = -1;
           return;
         }
         const score = daysSince(date, referenceDateInput.value);
-        scores['pullReqDate'] = score;
+        age_scores['pullReqDate'] = score;
         const actualDays = actualDaysSince(date);
-        scores_without_weights['pullReqDate'] = actualDays;
-        if("pullRequestWeight" in weights) {
-          scores["pullReqDate"] *= weights.pullRequestWeight;
+        age_scores_without_weights['pullReqDate'] = actualDays;
+        if("pullReqDate" in age_weights) {
+          age_scores["pullReqDate"] *= age_weights.pullReqDate;
         }
       }),
 
       getLastIssueResolvedDate(repoUser, repoName).then((date) => {
         if(date === undefined) {
           // issueDate.innerHTML = "NILL";
-          scores['issueDate'] = -1;
-          scores_without_weights['issueDate'] = -1;
+          age_scores['issueDate'] = -1;
+          age_scores_without_weights['issueDate'] = -1;
           return;
         }
         const score = daysSince(date, referenceDateInput.value);
-        scores['issueDate'] = score;
+        age_scores['issueDate'] = score;
         const actualDays = actualDaysSince(date);
-        scores_without_weights['issueDate'] = actualDays;
-        if("issueWeight" in weights) {
-          scores["issueDate"] *= weights.issueWeight;
+        age_scores_without_weights['issueDate'] = actualDays;
+        if("issueDate" in age_weights) {
+          age_scores["issueDate"] *= age_weights.issueDate;
         }
       }),
       // let defaultBranch = 'main';
@@ -705,46 +763,49 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
       getAvgLoc(repoUser, repoName).then((data) => {
         if(data === undefined || data.average_loc === undefined) {
           // avgLoc.innerHTML = "NILL";
-          scores['avgLoc'] = -1;
-          scores_without_weights['avgLoc'] = -1;
+          complexity_scores['avgLoc'] = -1;
+          complexity_scores_without_weights['avgLoc'] = -1;
           return;
         }
         const score = calculateScore(data.average_loc, locLimitInput.value);
         if(score === NaN) {
           // avgLoc.innerHTML = "NILL";
-          scores['avgLoc'] = -1;
-          scores_without_weights['avgLoc'] = -1;
+          complexity_scores['avgLoc'] = -1;
+          complexity_scores_without_weights['avgLoc'] = -1;
           return;
         }
-        scores['avgLoc'] = score;
-        scores_without_weights['avgLoc'] = data.average_loc;
-        if("locWeight" in weights) {
-          scores["avgLoc"] *= weights.locWeight;
+        complexity_scores['avgLoc'] = score;
+        complexity_scores_without_weights['avgLoc'] = data.average_loc;
+        if("avgLoc" in complexity_weights) {
+          complexity_scores["avgLoc"] *= complexity_weights.avgLoc;
         }
       }),
 
       get_avg_CCN(repoUser, repoName).then((data) => {
         if(data === undefined || data.avg_complexity === undefined) {
           // avgCCN.innerHTML = "NILL";
-          scores['avgCCN'] = -1;
-          scores_without_weights['avgCCN'] = -1;
+          complexity_scores['avgCCN'] = -1;
+          complexity_scores_without_weights['avgCCN'] = -1;
           return;
         }
         const score = calculateScore(data.avg_complexity, ccnLimitInput.value);
-        scores['avgCCN'] = score;
-        scores_without_weights['avgCCN'] = data.avg_complexity;
-        if("ccnWeight" in weights) {
-          scores["avgCCN"] *= weights.ccnWeight;
+        complexity_scores['avgCCN'] = score;
+        complexity_scores_without_weights['avgCCN'] = data.avg_complexity;
+        if("avgCCN" in complexity_weights) {
+          complexity_scores["avgCCN"] *= complexity_weights.avgCCN;
         }
       })
     ]; 
     // fill the circle
 
     Promise.all(promises).then(() => {
-      const progressValue = calculateFinalScore(scores);
-      setProgress(progressValue);
+      const ageProgressValue = calculateFinalScore(age_scores, age_weights);
+      const complexityProgressValue = calculateFinalScore(complexity_scores, complexity_weights);
+      setAgeProgress(ageProgressValue);
+      setComplexityProgress(complexityProgressValue);
       // setProgressBars(scores, weights, releaseDateProgressBar, deploymentDateProgressBar, commitDateProgressBar, pullReqDateProgressBar, issueDateProgressBar, avgLocProgressBar, avgCCNProgressBar);
-      setValues(scores_without_weights, releaseDate, deploymentDate, commitDate, pullReqDate, issueDate, avgLoc, avgCCN);
+      setAgeValues(age_scores_without_weights, releaseDate, deploymentDate, commitDate, pullReqDate, issueDate);
+      setComplexityValues(complexity_scores_without_weights, avgLoc, avgCCN);
     });
    
   } 
@@ -752,5 +813,4 @@ chrome.tabs.query({ active: true, currentWindow: true }, async(tabs) => {
     const dashboard = document.getElementById('dashboard');
     dashboard.innerHTML = "<h1>Not a valid GitHub repository</h1>";
   }
-  
 });

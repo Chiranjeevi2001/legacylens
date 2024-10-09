@@ -30,7 +30,8 @@
         {
             "resources" : [
                 "assets/CodeChroniclesIcon.png",
-                "./weights.json"
+                "./age_weights.json",
+                "./complexity_weights.json"
             ],
             "matches" : ["https://github.com/*"]
         }

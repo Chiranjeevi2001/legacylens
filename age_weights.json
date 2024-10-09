@@ -1,0 +1,8 @@
+{
+    "_comment": "Weights for the metrics used in the calculation of the age score. Please assign a value between 0 and 1 to each metric. The sum of all weights should be 1.0.",
+    "releaseDate": 0.2,
+    "deploymentDate": 0.2,
+    "commitDate": 0.2,
+    "issueDate": 0.2,
+    "pullReqDate": 0.2
+}

@@ -1,0 +1,5 @@
+{
+    "_comment": "Weights for the metrics used in the calculation of the complexity score. Please assign a value between 0 and 1 to each metric. The sum of all weights should be 1.0.",
+    "avgLoc": 0.5,
+    "avgCCN": 0.5
+}
