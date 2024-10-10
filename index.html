@@ -107,7 +107,6 @@
                                             <li><a href="https://pypi.org/project/pygount/">pygount</a></li>
                                             <li>A Chormium-based browser</li>
                                         </ul>
-
                                         <br/>
                                         <b>API Tokens and Accesses</b>
                                         <ul>
@@ -166,6 +165,7 @@
                                                 </li>
 
                                                 <li>Enable Developer Mode: In the top right corner, toggle the <i>Developer Mode</i> switch to enable it</li>
+                                                <img class="img-fluid" src="assets/images/demo/load_unpacked.png" alt="screenshot" width="500" height="700"/>
 
                                                 <li>Load the extension
                                                     <ul>
@@ -175,7 +175,7 @@
                                                         <li>Click on the pin icon to pin the extension to your browser's toolbar</li>
                                                     </ul>
                                                 </li>
-                                                <img class="img-fluid" src="assets/images/demo/load_unpacked.png" alt="screenshot" width="500" height="700"/>
+                                                
 
                                                 <li>Enjoy the extension!: Run the extension on the main page of any public GitHub repository to see the assessment results</li>
 
@@ -184,9 +184,6 @@
                             <section id="icons-section" class="doc-section">
                                 <h2 class="section-title">Approach diagram</h2>
                                 <div class="section-block">
-                                    <!-- <ul> -->
-                                        <!-- <li> -->
-                                            <!-- <strong>Generation of Labels</strong> -->
                                             <p>
                                                 The age metrics are directly retrieved by the extension JavaScript, popup.js, from the GitHub API, as this is a lightweight task. URL validation and extraction of the owner 
                                                 and repository names are also handled by 'popup.js'. For the complexity metrics, a back-end service written in Python and deployed on Vercel clones the repository into a local directory. 
@@ -195,24 +192,6 @@
                                             </p>
                                             <img class="img-fluid" src="assets/images/demo/LegacyLens_design.png" alt="approach" />
                                             <br>
-                                        <!-- </li> -->
-                                        <!-- <div style="height: 20px;"></div> -->
-                                        <!-- <li> -->
-                                            <!-- <strong>Working of Extension</strong>
-                                            <p>
-                                                The approach of labeling described in the previous step is deployed on a local server using the Flask web framework. 
-                                                The extension monitors the browser forload of GitHub issues page. 
-                                                Once loaded, the text data from each of the issues is extracted and sent as an input to 
-                                                the flask backend server. The server labels the issues using the labeling approach 
-                                                and returns the list of labels for the given issue. 
-                                                This list is used to generate the tag element for each of the labels. 
-                                                These tags areappended to the issues in the webpage
-                                            </p>
-                                            <img class="img-fluid" src="assets/images/demo/eTagger_extension.png" alt="elegant icons" />
-                                            <br>
-                                        </li> -->
-                                    <!-- </ul> -->
-
                                 
                             </section>
                             <section id="feature-section" class="doc-section">
