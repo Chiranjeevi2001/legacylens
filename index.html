@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>LegacyLens: Legacy Scoring for GitHub Repositories</title>
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">    
+    <link rel="shortcut icon" href="favicon.ico">  
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <!-- FontAwesome JS -->
+    <script defer src="assets/fontawesome/js/all.js"></script>
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="assets/plugins/bootstrap/css/bootstrap.min.css">   
+    <!-- Plugins CSS -->    
+    <link rel="stylesheet" href="assets/plugins/prism/prism.css">
+    <link rel="stylesheet" href="assets/plugins/elegant_font/css/style.css">  
+      
+    <!-- Theme CSS -->
+    <link id="theme-style" rel="stylesheet" href="assets/css/styles.css">
+    
+</head> 
+
+<body class="body-green">
+    <div class="page-wrapper">
+        <!-- ******Header****** -->
+        <header id="header" class="header">
+            <div class="container">
+                <div class="branding">
+                    <h1 class="logo">
+                        <a href="index.html">
+<!--                             <span aria-hidden="true" class="icon_documents_alt icon"></span> -->
+                            <span class="text-highlight"></span><span class="text-bold">COBOL RuleForge</span>
+                        </a>
+                    </h1>
+                    
+                </div>
+                
+                <!-- <div class="top-search-box">
+	                 <form class="form-inline search-form justify-content-center" action="" method="get">
+	            
+			            <input type="text" placeholder="Search..." name="search" class="form-control search-input">
+			            
+			            <button type="submit" class="btn search-btn" value="Search"><i class="fas fa-search"></i></button>
+			            
+			        </form>
+                </div> -->
+                
+            </div><!--//container-->
+        </header><!--//header-->
+        <div class="doc-wrapper">
+            <div class="container">
+                <!-- <div id="doc-header" class="doc-header text-center">
+                    <h1 class="doc-title"><i class="icon fa fa-paper-plane"></i> Quick Start</h1>
+                    <div class="meta"><i class="far fa-clock"></i> Last updated: Nov 21st, 2020</div>
+                </div>//doc-header -->
+                <div class="doc-body row">
+                    <div class="doc-content col-md-9 col-12 order-1">
+                        <div class="content-inner">
+                            <section id="download-section" class="doc-section">
+                                <h1 class="section-title">COBOL RuleForge: Extracting Clarity from Complexity</h1>
+                                <br>
+                                <h3 class="block-title">Tool Description</h3>
+                                <div class="section-block">
+                                    <p>
+                                    COBOL RuleForge, a tool designed to extract Business Rules from legacy COBOL codes and then summarize them. 
+                                    The tool is developed to help developers and practitioners to understand the business rules in the legacy COBOL code. 
+                                    The tool is developed using the Python programming. 
+                                    It uses few-shot prompting with Google's Gemini-Pro model to extract the business rules and then summarize them in a markdown file.
+                                    </p>
+<!--                                     <p style="color: red;">
+                                        <u>Note</u>: The current version of eTagger may have issues on runnning on some architectures of Mac systems.  
+                                    </p> -->
+<!--                                     <a href="https://github.com/rishalab/eTagger/archive/main.zip" class="btn btn-green" target="_blank"><i class="fas fa-download"></i> Download Tool Zip</a> -->
+                                </div>
+                            </section><!--//doc-section-->
+                            <section id="installation-section" class="doc-section">
+                                <h2 class="section-title">Installation</h2>
+                                <div id="step1"  class="section-block">
+                                    <h3 class="block-title" id="requirements">Requirements</h3>
+                                    <div class="code-block">
+                                        <p>
+                                        <b> Hardware and Operating System:</b>
+                                        <ul>
+                                            <li>Windows 8/10/11, macOS 12+, or Linux (Ubuntu 20.04+)</li>
+                                            <li>Processor: Intel Pentuim, Core i5/i7/i9 or Ultra, AMD Ryzen 5 or better</li>
+                                            <li>RAM: Minimum of 8GB required if the evaluation notebooks are to be run locally</li>
+                                            <li>Storage: 25 MB</li>
+                                        </ul>
+                                            The software was tested on a Windows 11 system with 16 GB RAM and NVIDIA MX350 2GB GPU.
+                                            <br/>
+                                        <b>Software:</b>
+
+                                        <ul>
+                                            <li><a href = "https://www.python.org/downloads/">Python</a> version 3.11 +</li>
+                                            <li><a href="https://jupyter.org/install">Jupyter</a> version 1.0.0, if you're planning to run the evaluation notebooks</li>
+                                            <li><a href="https://pypi.org/project/google-generativeai/">google-generativeai</a> version 0.4.0</li>
+                                            <li><a href="https://docs.streamlit.io/get-started/installation">streamlit</a> version 1.38.0 for GUI frontend</li>
+                                            <li><a href="https://pypi.org/project/rouge-score/">rouge-score</a> version 0.1.2 for evaluation scoring</li>
+                                            <li><a href="https://pypi.org/project/evaluate/">evaluate</a> version 0.4.1</li>
+                                            <li><a href="https://pypi.org/project/glob2/">glob2</a></li>
+
+                                        </ul>
+					    <!-- <ul>
+					   <li>Intel processors from Pentium, Core i3, i7, i9, and Xeon series.</li>
+					    <li>Un.</li>
+					    <li>Have <a href="https://cran.r-project.org">R</a> installed in your system.</li>
+					   </ul> -->
+					                    </p>
+				    
+				    <!-- <b>If you are using Ubuntu 22.04 please run the below commands to install R.</b>
+				    <ul>
+					    <li>wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | sudo gpg --dearmor -o /usr/share/keyrings/r-project.gpg</li>
+
+					    <li>echo "deb [signed-by=/usr/share/keyrings/r-project.gpg] https://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/" | sudo tee -a /etc/apt/sources.list.d/r-project.list</li>
+					    <li>sudo apt update</li>
+					    <li>sudo apt install --no-install-recommends r-base</li>
+					    <li>sudo -i R</li>
+					   </ul> -->
+                                
+                                    </div>
+                                </section>
+
+                                <section id="usage" class="doc-section">
+                                    <h2 class="section-title">Running the project</h2>
+                                    <br/>
+                                    <h3 class="block-title" id="from-CLI">CLI Usage:</h3>
+                                    <div class="code-block">
+                                        
+                                        <p>STEP1: Clone or download this github repository:</p>
+                                        <p><code>git clone https://github.com/Chiranjeevi2001/cobol-ruleforge.git</code></p>
+                                        <br>
+<!--                                         <h5 id="running-backend">Running the RJoules backend</h5> -->
+                                        <p>STEP2: Navigate into the ../cobol-ruleforge/Test_COBOLs/InputFiles directory</p>
+                                        <p><code>cd ./cobol-ruleforge/Test_COBOLs/InputFiles</code></p>
+                                        <p><code>pwd</code></p>
+					                    <p>We have provided a few COBOL files here for testing. You can add additional files here along with them.</p>
+                                        <p>Navigate back to ./cobol-ruleforge/src folder</p>
+                                        <p><code>cd ../../src</code></p>
+                                        <br/>
+                                        <p>STEP3: Get the Gemini-Pro API key from <a href="https://aistudio.google.com/app/apikey">Google AI Studio</a>, and paste it in the given space in all of the summarization scripts.</p>
+                                        <br/>
+                                        <p>STEP4: Run the preprocess.py file to preprocess the input COBOL files</p>
+                                        <p><code>python preprocess.py</code></p>
+                                        <br/>
+                                        <p>STEP5: Navigate back to the ./cobol-ruleforge folder, and provide execute access to Summarize.sh file</p>
+                                        <p><code>chmod +x Summarize.sh</code></p>
+                                        <br/>
+                                        <p>STEP6: Execute Summarize.sh</p>
+                                        <p><code>./Summarize.sh</code></p>
+                                        <br/>
+                                        <p>STEP7: The Business Rules summary output will be generated in the ./Test_COBOLs/Output_BR_Summary directory, ant the Code summary output will be generated in the ./Test_COBOLs/Output_Code_Summary directory</p>                              
+                                        
+                                    </div>
+                                    <h3 class="block-title" id="from-GUI">GUI Usage:</h3>
+                                    <div class="code-block">
+                                        <p>STEP1: Clone or download this github repository</p>
+                                        <p><code>git clone https://github.com/Chiranjeevi2001/cobol-ruleforge.git</code></p>
+                                        <p>STEP2: Navigate to the ./cobol-ruleforge/UI directory</p>
+                                        <p><code>cd ./cobol-ruleforge/UI</code></p>
+                                        <p>STEP3: Run the following command to open the GUI screen on your web browser</p>
+                                        <p><code>streamlit run BR_extractor_ui.py --server.enableXsrfProtection false</code></p>
+                                        <p> You should be able to see the GUI in your browser</p>
+                                        <p>STEP4: Follow the steps in the screen to get the Business Rules summary.</p>
+
+                                    </div>
+                                </section>
+                                    <!-- <h3 class="block-title" id="usage">Usage</h3>
+                                    <div class="code-block">
+                                        <p>Measuring energy consumption due to R code snippets.</p>
+                                        <p>Ex: <a href="https://github.com/iNPUTmice/Conversations">iNPUTmice/Conversations</a></p>
+                                       
+                                         <img src="assets/images/demo/isssues_tab.png" alt="issues tab"> 
+                                    </div>
+                                </div>
+                            </section> -->
+                            <section id="icons-section" class="doc-section">
+                                <h2 class="section-title">Approach diagram</h2>
+                                <div class="section-block">
+                                    <!-- <ul> -->
+                                        <!-- <li> -->
+                                            <!-- <strong>Generation of Labels</strong> -->
+                                            <p>
+                                                COBOL RuleForge uses Google's Gemini-Pro model to extract Business Rules from COBOL files and summarize them. To understand the need of extracting business rules, the summaries generated from business rules are compared against
+                                                traditional code summaries generated by the model. The model is trained on the COBOL dataset and the summaries are generated using the few-shot prompting technique. The design of COBOL RuleForge is shown below:
+                                            </p>
+                                            <img class="img-fluid" src="assets/images/demo/COBOL-RuleForge-design.png" alt="elegant icons" />
+                                            <br>
+                                        <!-- </li> -->
+                                        <!-- <div style="height: 20px;"></div> -->
+                                        <!-- <li> -->
+                                            <!-- <strong>Working of Extension</strong>
+                                            <p>
+                                                The approach of labeling described in the previous step is deployed on a local server using the Flask web framework. 
+                                                The extension monitors the browser forload of GitHub issues page. 
+                                                Once loaded, the text data from each of the issues is extracted and sent as an input to 
+                                                the flask backend server. The server labels the issues using the labeling approach 
+                                                and returns the list of labels for the given issue. 
+                                                This list is used to generate the tag element for each of the labels. 
+                                                These tags areappended to the issues in the webpage
+                                            </p>
+                                            <img class="img-fluid" src="assets/images/demo/eTagger_extension.png" alt="elegant icons" />
+                                            <br>
+                                        </li> -->
+                                    <!-- </ul> -->
+
+                                
+                            </section>
+                            <section id="feature-section" class="doc-section">
+                                <h2 class="section-title">Usage snippet screenshot (GUI)</h2>
+                                <div class="section-block">
+
+                                    <ul style="list-style: none;">
+                                        <li>
+                                            <br>
+                                            <img class="img-fluid" src="assets/images/demo/usage-1.png" alt="screenshot" width="500" height="700"/>
+                                            <br><br>
+                                        </li>
+                                        <li>
+                                            <br>
+                                            <img class="img-fluid" src="assets/images/demo/usage-2.png" alt="elegant icons" width="500" height="700"/>
+                                            <br><br>
+                                        </li>
+                                        <li>
+                                            <br>
+                                            <img class="img-fluid" src="assets/images/demo/usage-3.png" alt="elegant icons" width="500" height="700"/>
+                                            <br><br>
+                                        </li>
+                                        <li>
+                                            <br>
+                                            <img class="img-fluid" src="assets/images/demo/usage-4.png" alt="elegant icons" width="500" height="700"/>
+                                            <br><br>
+                                        </li>
+                                        <li>
+                                            <br>
+                                            <img class="img-fluid" src="assets/images/demo/usage-5.png" alt="elegant icons" width="500" height="700"/>
+                                            <br><br>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                            </section>
+
+                            <section id="uses-section" class="doc-section">
+                                <h2 class="section-title">Goal</h2>
+                                <div class="section-block">
+                                    
+                                            Helping developers and practitioners to better understand the context behind legacy COBOL codes. Extracting and summarizing business rules 
+                                            will give them a better clarity about the functionality of the code.
+                                  
+                                </div>
+                                
+                            </section>
+
+
+                            <!-- <section id="metric-section" class="doc-section">
+                                <h2 class="section-title">Metrics used in AC<sup>2</sup></h2>
+                                <div class="section-block">
+                                    
+                                    <strong>Cohesion using LCOM4</strong>: It measures the degree to which componentsare functionally related. The values are stored in seperate files for each version.
+                                    <br><br>
+                                    <strong>A2A (Architecture-to-architecture)</strong>: It gives the similarity measure of the component-level changes between thearchitectures between two releases.
+                                    We modified the original A2A metric in the context of AC2 tool to get the following metrics:
+                                    <br><br>
+                                    <ul>
+                                        <li>
+                                            <strong>Architectural Similarity</strong>: It is calculated using directory viewwhere directory is considered as a component and files as its entities.
+
+                                        </li>
+                                        <li>
+                                            <strong>Functional Similarity</strong>: We use call graphs to calculate the funcitonal similarity in which function calls and definitions are considered as entities.
+                                        </li>
+                                        <li><strong>Class Similarity</strong>: For this metric, we use collaboration graphs, the class definitions are considered as the entities.</li>
+                                        <li><strong>Module Similarity</strong>: Similarily we use modules as entities for this metric. </li>
+
+                                    </ul>
+                                </div>
+                                
+                            </section>-->
+				
+			<section id="result-section" class="doc-section">
+                                <h2 class="section-title">Results</h2>
+                                <div class="section-block">
+                                    TBD
+                                    
+                                    
+                                </div>
+                                
+                            </section>
+                            
+                            
+                             
+                            
+                            
+                
+                            
+                            
+                            
+                            <section id="video-section" class="doc-section">
+                                <h2 class="section-title">Demo Video</h2>
+                                <div class="section-block">
+                                    <div class="row">
+                                        <div class="col-md-6 col-12">
+                                            
+                                            <!-- <div class="embed-responsive embed-responsive-4by3"> -->
+                                                <!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/yMKFuvAM-DE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
+                                                <!-- <iframe width="729" height="410" src="https://www.youtube.com/embed/W6yiaXK2rEM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
+                                                <!-- <iframe width="729" height="410" src="https://www.youtube.com/embed/eLcOIPiGt_g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
+                                                <!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/GNrJfZ0RCVI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
+                                            <!-- </div> -->
+						<!-- <div>The output file name has been updated as RJoules_output.csv</div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                            
+                            </section>
+                        </div><!--//content-inner-->
+                    </div><!--//doc-content-->
+                    <div class="doc-sidebar col-md-3 col-12 order-0 d-none d-md-flex">
+                        <div id="doc-nav" class="doc-nav">
+	                        
+	                            <nav id="doc-menu" class="nav doc-menu flex-column sticky">
+	                                <a class="nav-link scrollto" href="#installation-section">Installation</a>
+                                    <nav class="doc-sub-menu nav flex-column">
+                                        <a class="nav-link scrollto" href="#requirements">Requirements</a>
+                                        <a class="nav-link scrollto" href="#usage">Usage</a>
+                                    </nav><!--//nav-->
+                                    <a class="nav-link scrollto" href="#icons-section">Approach</a>
+                                    <a class="nav-link scrollto" href="#feature-section">Screenshots</a>
+                                    <a class="nav-link scrollto" href="#uses-section">Goals</a>
+					                <a class="nav-link scrollto" href="#result-section">Results</a>
+                            
+	                                <a class="nav-link scrollto" href="#video-section">Demo Video</a>
+	                            </nav><!--//doc-menu-->
+	                        
+                        </div>
+                    </div><!--//doc-sidebar-->
+                </div><!--//doc-body-->              
+            </div><!--//container-->
+        </div><!--//doc-wrapper-->
+        
+        <div id="promo-block" class="promo-block">
+            <div class="container">
+                <div class="promo-block-inner">
+                   
+                    <!-- <h3 class="promo-title">Contributors</h3> -->
+                    <div class="content-holder col-lg-7 col-md-6 col-7">
+                        <div class="content-holder-inner">
+                            <div class="desc">
+                                <h3 class="promo-title">Contributors</h3>
+                                <p> Chiranjeevi B S, Sridhar Chimalakonda</p>
+                                <!-- <a class="btn btn-cta" href="" target="_blank"><i class="fas fa-external-link-alt"></i> Preprint</a> -->
+                            </div><!--//desc-->
+                        </div><!--//content-holder-inner-->
+                    </div><!--//content-holder-->
+
+                </div><!--//promo-block-inner-->  
+            </div><!--//container-->
+        </div><!--//promo-block-->
+        
+    </div><!--//page-wrapper-->
+    <!-- Main Javascript -->          
+    <script type="text/javascript" src="assets/plugins/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="assets/plugins/prism/prism.js"></script>    
+    <script type="text/javascript" src="assets/plugins/jquery-scrollTo/jquery.scrollTo.min.js"></script>      
+    <script type="text/javascript" src="assets/plugins/stickyfill/dist/stickyfill.min.js"></script>                                                             
+    <script type="text/javascript" src="assets/js/main.js"></script>
+    
+</body>
+</html> 
