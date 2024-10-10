@@ -32,7 +32,7 @@
                     <h1 class="logo">
                         <a href="index.html">
 <!--                             <span aria-hidden="true" class="icon_documents_alt icon"></span> -->
-                            <span class="text-highlight"></span><span class="text-bold">COBOL RuleForge</span>
+                            <span class="text-highlight"></span><span class="text-bold">LegacyLens</span>
                         </a>
                     </h1>
                     
@@ -60,15 +60,15 @@
                     <div class="doc-content col-md-9 col-12 order-1">
                         <div class="content-inner">
                             <section id="download-section" class="doc-section">
-                                <h1 class="section-title">COBOL RuleForge: Extracting Clarity from Complexity</h1>
+                                <h1 class="section-title">LegacyLens: Legacy Scoring for GitHub Repositories</h1>
                                 <br>
                                 <h3 class="block-title">Tool Description</h3>
                                 <div class="section-block">
                                     <p>
-                                    COBOL RuleForge, a tool designed to extract Business Rules from legacy COBOL codes and then summarize them. 
-                                    The tool is developed to help developers and practitioners to understand the business rules in the legacy COBOL code. 
-                                    The tool is developed using the Python programming. 
-                                    It uses few-shot prompting with Google's Gemini-Pro model to extract the business rules and then summarize them in a markdown file.
+                                        LegacyLens was designed as a light-weight chrome extension to assess GitHub repositories in real time to evaluate the
+                                        legacy state of the repository, with the aim of helping the developers make a quick informed decision about the future
+                                        of the repository. The assessment is done through analyzing two key categories of metrics - 1.) age of the repository and 2.)
+                                        code complexity metrics. These metrics provide information about the repository which is not explicitly mentioned in the existing documentation.
                                     </p>
 <!--                                     <p style="color: red;">
                                         <u>Note</u>: The current version of eTagger may have issues on runnning on some architectures of Mac systems.  
@@ -85,23 +85,34 @@
                                         <b> Hardware and Operating System:</b>
                                         <ul>
                                             <li>Windows 8/10/11, macOS 12+, or Linux (Ubuntu 20.04+)</li>
-                                            <li>Processor: Intel Pentuim, Core i5/i7/i9 or Ultra, AMD Ryzen 5 or better</li>
-                                            <li>RAM: Minimum of 8GB required if the evaluation notebooks are to be run locally</li>
+                                            <li>Processor: Intel Pentuim, Core i3/i5/i7/i9 or Ultra, AMD Ryzen 5 or better</li>
+                                            <li>RAM: Minimum of 4GB</li>
                                             <li>Storage: 25 MB</li>
                                         </ul>
-                                            The software was tested on a Windows 11 system with 16 GB RAM and NVIDIA MX350 2GB GPU.
+                                            The software was tested on a Windows 11 system with 16 GB RAM.
                                             <br/>
                                         <b>Software:</b>
 
                                         <ul>
-                                            <li><a href = "https://www.python.org/downloads/">Python</a> version 3.11 +</li>
-                                            <li><a href="https://jupyter.org/install">Jupyter</a> version 1.0.0, if you're planning to run the evaluation notebooks</li>
-                                            <li><a href="https://pypi.org/project/google-generativeai/">google-generativeai</a> version 0.4.0</li>
-                                            <li><a href="https://docs.streamlit.io/get-started/installation">streamlit</a> version 1.38.0 for GUI frontend</li>
-                                            <li><a href="https://pypi.org/project/rouge-score/">rouge-score</a> version 0.1.2 for evaluation scoring</li>
-                                            <li><a href="https://pypi.org/project/evaluate/">evaluate</a> version 0.4.1</li>
-                                            <li><a href="https://pypi.org/project/glob2/">glob2</a></li>
+                                            <li><a href = "https://www.python.org/downloads/">Python</a> version 3.10 +</li>
+                                            <!-- <li><a href="https://jupyter.org/install">Jupyter</a> version 1.0.0, if you're planning to run the evaluation notebooks</li> -->
+                                            <!-- <li><a href="https://pypi.org/project/google-generativeai/">google-generativeai</a> version 0.4.0</li> -->
+                                            <!-- <li><a href="https://docs.streamlit.io/get-started/installation">streamlit</a> version 1.38.0 for GUI frontend</li> -->
+                                            <!-- <li><a href="https://pypi.org/project/rouge-score/">rouge-score</a> version 0.1.2 for evaluation scoring</li> -->
+                                            <!-- <li><a href="https://pypi.org/project/evaluate/">evaluate</a> version 0.4.1</li> -->
+                                            <li><a href="https://pypi.org/project/fastapi-framework/">fastapi</a></li>
+                                            <li><a href="https://pypi.org/project/uvicorn/">uvicorn</a></li>
+                                            <li><a href="https://pypi.org/project/lizard/1.8.7/">lizard</a></li>
+                                            <li><a href="https://pypi.org/project/pygit2/0.16.2/">pygit2</a></li>
+                                            <li><a href="https://pypi.org/project/pygount/">pygount</a></li>
+                                            <li>A Chormium-based browser</li>
+                                        </ul>
 
+                                        <br/>
+                                        <b>API Tokens and Accesses</b>
+                                        <ul>
+                                            <li><a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token">GitHub Finegrained PAT</a></li>
+                                            <li><a href="https://vercel.com/docs/accounts/create-an-account">Vercel Account</a> for accessing backend API endpoint. Be sure to mail your signed-up email to <a href="mailto:cs23m104@iittp.ac.in">cs23m104@iittp.ac.in</a> with the purpose of using the tool for gaining access. This is for security reasons.</li>
                                         </ul>
 					    <!-- <ul>
 					   <li>Intel processors from Pentium, Core i3, i7, i9, and Xeon series.</li>
@@ -124,58 +135,51 @@
                                 </section>
 
                                 <section id="usage" class="doc-section">
-                                    <h2 class="section-title">Running the project</h2>
-                                    <br/>
-                                    <h3 class="block-title" id="from-CLI">CLI Usage:</h3>
-                                    <div class="code-block">
-                                        
-                                        <p>STEP1: Clone or download this github repository:</p>
-                                        <p><code>git clone https://github.com/Chiranjeevi2001/cobol-ruleforge.git</code></p>
-                                        <br>
-<!--                                         <h5 id="running-backend">Running the RJoules backend</h5> -->
-                                        <p>STEP2: Navigate into the ../cobol-ruleforge/Test_COBOLs/InputFiles directory</p>
-                                        <p><code>cd ./cobol-ruleforge/Test_COBOLs/InputFiles</code></p>
-                                        <p><code>pwd</code></p>
-					                    <p>We have provided a few COBOL files here for testing. You can add additional files here along with them.</p>
-                                        <p>Navigate back to ./cobol-ruleforge/src folder</p>
-                                        <p><code>cd ../../src</code></p>
-                                        <br/>
-                                        <p>STEP3: Get the Gemini-Pro API key from <a href="https://aistudio.google.com/app/apikey">Google AI Studio</a>, and paste it in the given space in all of the summarization scripts.</p>
-                                        <br/>
-                                        <p>STEP4: Run the preprocess.py file to preprocess the input COBOL files</p>
-                                        <p><code>python preprocess.py</code></p>
-                                        <br/>
-                                        <p>STEP5: Navigate back to the ./cobol-ruleforge folder, and provide execute access to Summarize.sh file</p>
-                                        <p><code>chmod +x Summarize.sh</code></p>
-                                        <br/>
-                                        <p>STEP6: Execute Summarize.sh</p>
-                                        <p><code>./Summarize.sh</code></p>
-                                        <br/>
-                                        <p>STEP7: The Business Rules summary output will be generated in the ./Test_COBOLs/Output_BR_Summary directory, ant the Code summary output will be generated in the ./Test_COBOLs/Output_Code_Summary directory</p>                              
-                                        
-                                    </div>
-                                    <h3 class="block-title" id="from-GUI">GUI Usage:</h3>
-                                    <div class="code-block">
-                                        <p>STEP1: Clone or download this github repository</p>
-                                        <p><code>git clone https://github.com/Chiranjeevi2001/cobol-ruleforge.git</code></p>
-                                        <p>STEP2: Navigate to the ./cobol-ruleforge/UI directory</p>
-                                        <p><code>cd ./cobol-ruleforge/UI</code></p>
-                                        <p>STEP3: Run the following command to open the GUI screen on your web browser</p>
-                                        <p><code>streamlit run BR_extractor_ui.py --server.enableXsrfProtection false</code></p>
-                                        <p> You should be able to see the GUI in your browser</p>
-                                        <p>STEP4: Follow the steps in the screen to get the Business Rules summary.</p>
+                                    <h2 class="section-title">Usage</h2>
+                                    <div class="section-block">
+                                        <p>
+                                            The tool is designed as a Chrome extension. The extension can be installed by following the below steps:
+                                        </p>
+                                        <ol>
+                                                <li>Clone the GitHub repository by running the following command:
+                                                    <div class="code-block">
+                                                        <code>git clone https://github.com/Chiranjeevi2001/code-chronicle.git </code>
+                                                    </div>
+                                                </li>
 
-                                    </div>
+                                                <li>Provide the GitHub Personal Token for rate limit extension
+                                                    <ul>
+                                                        <li>Create your <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token">GitHub PAT</a> (Leave permissions as default)</li>
+                                                        <li>Copy the token and paste it in the RHS of line number 4 in `popup.js` file:
+                                                            <div class="code-block">
+                                                                <code>const token = 'PASTE YOUR TOKEN HERE' </code>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+
+                                                <li>Open Chrome Extensions manager
+                                                    <ul>
+                                                        <li>Open Google Chrome or any Chormium-based browser</li>
+                                                        <li>Navigate to the extensions page by entering <code>chomre://extensions</code> in the address bar</li>
+                                                    </ul>
+                                                </li>
+
+                                                <li>Enable Developer Mode: In the top right corner, toggle the <i>Developer Mode</i> switch to enable it</li>
+
+                                                <li>Load the extension
+                                                    <ul>
+                                                        <li>Click the <i>Load Unpacked</i> button</li>
+                                                        <li>In the file browser, select the folder where the repository was cloned (it should contain `manifest.json` file)</li>
+                                                        <li>Click <i>Open</i></li>
+                                                        <li>Click on the pin icon to pin the extension to your browser's toolbar</li>
+                                                    </ul>
+                                                </li>
+
+                                                <li>Enjoy the extension!: Run the extension on the main page of any public GitHub repository to see the assessment results</li>
+
                                 </section>
-                                    <!-- <h3 class="block-title" id="usage">Usage</h3>
-                                    <div class="code-block">
-                                        <p>Measuring energy consumption due to R code snippets.</p>
-                                        <p>Ex: <a href="https://github.com/iNPUTmice/Conversations">iNPUTmice/Conversations</a></p>
-                                       
-                                         <img src="assets/images/demo/isssues_tab.png" alt="issues tab"> 
-                                    </div>
-                                </div>
-                            </section> -->
+      
                             <section id="icons-section" class="doc-section">
                                 <h2 class="section-title">Approach diagram</h2>
                                 <div class="section-block">
