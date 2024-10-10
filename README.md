@@ -9,7 +9,7 @@ Follow the steps below to install the Code Chronicle Chrome extension:
 
 ### Step1: Clone the repository:
  ```bash
-git clone https://github.com/Chiranjeevi2001/code-chronicle.git
+git clone https://github.com/Chiranjeevi2001/legacylens.git
 ```
 ### Step2: Provide the GitHub Personal Token for rate limit extension
 1. Create your [personalized fine-grained github token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token). (Leave permissions as default)
