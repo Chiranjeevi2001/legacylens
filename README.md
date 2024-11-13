@@ -43,4 +43,4 @@ Feel free to customize the tool and play around
 
 ## Support
 
-For any help regarding the tool, please contact [@Chiranjeevi2001](mailto:cs23m104@iittp.ac.in)
+For any help regarding the tool, please contact [cs23m104@iittp.ac.in](mailto:cs23m104@iittp.ac.in)
