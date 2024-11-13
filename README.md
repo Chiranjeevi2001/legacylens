@@ -40,3 +40,7 @@ Navigate to the main page of any GitHub repository, and open the extension to be
 You can customize the weights to each of the metrics! Just open `age_weights.json` and/or `complexity_weights.json` files to configure weights given to each metric. Also, there is an in-built settings option in the extension itself. Adjust the values based on your preference, or leave it be! By doing this, users can define 'LEGACY' according to their own needs!
 
 Feel free to customize the tool and play around
+
+## Support
+
+For any help regarding the tool, please contact [@Chiranjeevi2001](mailto:cs23m104@iittp.ac.in)
